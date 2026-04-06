@@ -1,15 +1,16 @@
-from app.web.utils.supabase_client import supabase
+from utils.supabase_client import supabase
+from models.auth import LoginRequest
 
-def register_user(email, password, nombre, rol):
+def register_user(data):
     try:
-        existing = supabase.table("usuario").select().eq("correo", email).execute()
+        existing = supabase.table("usuario").select().eq("correo", data.correo).execute()
 
         if existing.data:
             return {"data": {}, "message": "Ocurrio un error", "error": "El correo ya está registrado"}
 
         auth_response = supabase.auth.sign_up({
-            "email": email,
-            "password": password
+            "email": data.correo,
+            "password": data.password
         })
 
         if auth_response.user is None:
@@ -18,9 +19,9 @@ def register_user(email, password, nombre, rol):
         
         user_data = {
             "auth_id": auth_response.user.id,
-            "correo": email,
-            "nombre": nombre,
-            "rol": rol
+            "correo": data.correo,
+            "nombre": data.nombre,
+            "rol": data.rol
         }
 
         db_response = supabase.table("usuario").insert(user_data).execute()
@@ -46,11 +47,11 @@ def register_user(email, password, nombre, rol):
         return {"data": {}, "message": "Ocurrio un error", "error": str(e)}
 
 
-def login_user(email, password):
+def login_user(data: LoginRequest):
     try:
         auth_response = supabase.auth.sign_in_with_password({
-            "email": email,
-            "password": password
+            "email": data.correo,
+            "password": data.password
         })
 
         if not auth_response.user:
