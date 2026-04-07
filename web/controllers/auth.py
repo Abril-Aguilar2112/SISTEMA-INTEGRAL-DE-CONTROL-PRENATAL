@@ -25,7 +25,7 @@ def login():
             print(session)
 
             if session.get('rol') == 'director_general':
-                return redirect(url_for('director_general.dashboard'))
+                return redirect(url_for('dashboard.dashboard'))
 
     return render_template('login.html', response=None)	
 

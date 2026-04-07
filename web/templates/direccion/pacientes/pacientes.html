@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEP - Pacientes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sigep-style.css') }}">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-user">
+            <div class="user-avatar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <div class="user-info">
+                <h2>SIGEP</h2>
+                <p>Director General</p>
+            </div>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('dashboard.dashboard') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                Dashboard
+            </a></li>
+            <li><a href="{{ url_for('pacientes.pacientes') }}" class="active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Pacientes
+            </a></li>
+            <li><a href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                Citas
+            </a></li>
+            <li><a href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Expedientes
+            </a></li>
+            <li><a href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                Censo
+            </a></li>
+            <li><a href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                Reportes
+            </a></li>
+            <li><a href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Usuarios
+            </a></li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <a href="/auth/logout" style="display: flex; align-items: center; gap: 0.75rem; color: var(--gray-600); text-decoration: none; font-size: 0.875rem; padding: 0.5rem 1rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Cerrar Sesión
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1>Gestión de Pacientes</h1>
+                <p>Visualiza y administra el registro de pacientes</p>
+            </div>
+            <a href="paciente_registro.html" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Nueva Paciente
+            </a>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="section-card mb-6">
+            <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 1rem; align-items: end;">
+                <div class="form-group" style="margin: 0;">
+                    <label class="form-label">Buscar Paciente</label>
+                    <div class="input-group">
+                        <input type="text" class="form-input" placeholder="Nombre, CURP o No. Expediente...">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </div>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                    <label class="form-label">Nivel de Riesgo</label>
+                    <select class="form-select">
+                        <option>Todos</option>
+                        <option>Bajo</option>
+                        <option>Medio</option>
+                        <option>Alto</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                    <label class="form-label">Semanas de Gestación</label>
+                    <select class="form-select">
+                        <option>Todas</option>
+                        <option>1-12 semanas</option>
+                        <option>13-24 semanas</option>
+                        <option>25-36 semanas</option>
+                        <option>37+ semanas</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patients Table -->
+        <div class="section-card">
+            <div class="table-container" style="box-shadow: none; border: none;">
+                <table>
+                <thead>
+                    <tr>
+                        <th>No. Expediente</th>
+                        <th>Nombre Completo</th>
+                        <th>Edad</th>
+                        <th>SDG</th>
+                        <th>Riesgo</th>
+                        <th>FPP</th>
+                        <th>Última Consulta</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>001</strong></td>
+                        <td>María García López</td>
+                        <td>28</td>
+                        <td><span class="badge badge-info">24 SDG</span></td>
+                        <td><span class="badge badge-success">Bajo</span></td>
+                        <td>2026-07-17</td>
+                        <td>2026-03-20</td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a href="paciente_detalle.html" class="btn btn-secondary btn-icon" title="Ver Detalle">👁️</a>
+                                <a href="paciente_editar.html" class="btn btn-secondary btn-icon" title="Editar">✏️</a>
+                                <a href="cita_crear.html" class="btn btn-primary btn-icon" title="Agendar Cita">📅</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>002</strong></td>
+                        <td>Ana Martínez Ruiz</td>
+                        <td>32</td>
+                        <td><span class="badge badge-info">18 SDG</span></td>
+                        <td><span class="badge badge-warning">Medio</span></td>
+                        <td>2026-08-27</td>
+                        <td>2026-03-28</td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a href="paciente_detalle.html" class="btn btn-secondary btn-icon" title="Ver Detalle">👁️</a>
+                                <a href="paciente_editar.html" class="btn btn-secondary btn-icon" title="Editar">✏️</a>
+                                <a href="cita_crear.html" class="btn btn-primary btn-icon" title="Agendar Cita">📅</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>003</strong></td>
+                        <td>Carmen López García</td>
+                        <td>36</td>
+                        <td><span class="badge badge-info">32 SDG</span></td>
+                        <td><span class="badge badge-danger">Alto</span></td>
+                        <td>2026-05-22</td>
+                        <td>2026-04-01</td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a href="paciente_detalle.html" class="btn btn-secondary btn-icon" title="Ver Detalle">👁️</a>
+                                <a href="paciente_editar.html" class="btn btn-secondary btn-icon" title="Editar">✏️</a>
+                                <a href="cita_crear.html" class="btn btn-primary btn-icon" title="Agendar Cita">📅</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>004</strong></td>
+                        <td>Laura Sánchez Torres</td>
+                        <td>25</td>
+                        <td><span class="badge badge-info">20 SDG</span></td>
+                        <td><span class="badge badge-success">Bajo</span></td>
+                        <td>2026-08-30</td>
+                        <td>2026-03-18</td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a href="paciente_detalle.html" class="btn btn-secondary btn-icon" title="Ver Detalle">👁️</a>
+                                <a href="paciente_editar.html" class="btn btn-secondary btn-icon" title="Editar">✏️</a>
+                                <a href="cita_crear.html" class="btn btn-primary btn-icon" title="Agendar Cita">📅</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>005</strong></td>
+                        <td>Patricia Fernández Jiménez</td>
+                        <td>29</td>
+                        <td><span class="badge badge-info">15 SDG</span></td>
+                        <td><span class="badge badge-success">Bajo</span></td>
+                        <td>2026-09-15</td>
+                        <td>2026-03-25</td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a href="paciente_detalle.html" class="btn btn-secondary btn-icon" title="Ver Detalle">👁️</a>
+                                <a href="paciente_editar.html" class="btn btn-secondary btn-icon" title="Editar">✏️</a>
+                                <a href="cita_crear.html" class="btn btn-primary btn-icon" title="Agendar Cita">📅</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+            <p style="color: var(--gray-600);">Mostrando 5 de 248 pacientes</p>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-secondary">← Anterior</button>
+                <button class="btn btn-secondary">1</button>
+                <button class="btn btn-primary">2</button>
+                <button class="btn btn-secondary">3</button>
+                <button class="btn btn-secondary">Siguiente →</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify, session, redirect, url_for, render_template
 from services.dashboard_service import get_dashboard_stats, get_actividad_reciente, get_estadistica_dashboard
 
-director_general_bp = Blueprint('director_general', __name__)
+dashboard_bp = Blueprint('dashboard', __name__)
 
-@director_general_bp.route('/dashboard')
+@dashboard_bp.route('/dashboard')
 def dashboard():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
@@ -15,4 +15,6 @@ def dashboard():
     estadistica_dashboard = get_estadistica_dashboard()
     
     return render_template('direccion/dashboard.html', stats_data=stats, actividad_reciente=actividad_reciente, estadistica_dashboard=estadistica_dashboard)
+
+
     

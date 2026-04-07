@@ -1,7 +1,8 @@
 
 from flask import Flask
 from controllers.auth import auth_bp
-from controllers.director_general import director_general_bp
+from controllers.dashboard import dashboard_bp
+from controllers.pacientes import pacientes_bp
 
 def create_app():
     app = Flask(__name__)
@@ -9,5 +10,7 @@ def create_app():
     app.config.from_object("config.Config")
 
     app.register_blueprint(auth_bp, url_prefix="/auth")
-    app.register_blueprint(director_general_bp, url_prefix="/direccion")
+    app.register_blueprint(dashboard_bp, url_prefix="/dashboard")
+    app.register_blueprint(pacientes_bp, url_prefix="/gestion")
+
     return app
