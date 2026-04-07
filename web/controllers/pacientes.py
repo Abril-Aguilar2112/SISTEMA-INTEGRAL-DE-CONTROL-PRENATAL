@@ -1,8 +1,7 @@
 from flask import Blueprint, request, jsonify, session, redirect, url_for, render_template, flash
 from pydantic import ValidationError
-from services.paciente_service import get_pacientes
-from services.registro_paciente_service import registrar_paciente
-from models.paciente import PacienteCreate
+from services.paciente_service import get_pacientes, get_paciente_by_id, registrar_paciente, actualizar_paciente
+from models.paciente import PacienteCreate, PacienteUpdate
 
 pacientes_bp = Blueprint('pacientes', __name__)
 
@@ -30,13 +29,11 @@ def pacientes():
 @pacientes_bp.route("/paciente_registro", methods=["GET", "POST"])
 def paciente_registro():
     if request.method == "GET":
-        return render_template("direccion/pacientes/paciente_registro.html", error=None)
+        return render_template("direccion/pacientes/paciente_registro.html")
  
     try:
         paciente = PacienteCreate(**request.form)
-        print(paciente.to_rpc())
         result   = registrar_paciente(paciente.to_rpc())
-        print(result)
  
         if result and result.get("ok"):
             return redirect(url_for("pacientes.pacientes"))
@@ -46,6 +43,40 @@ def paciente_registro():
         return render_template("direccion/pacientes/paciente_registro.html", error=error)
 
     except ValidationError as e:
-        print("ERROR:", e)
         flash(str(e), "error")
         return render_template("direccion/pacientes/paciente_registro.html", error=str(e))
+
+@pacientes_bp.route("/paciente_editar/<int:id_paciente>", methods=["GET", "POST"])
+def paciente_editar(id_paciente):
+
+    if request.method == "GET":
+        paciente = get_paciente_by_id(id_paciente)["data"]
+
+        if paciente.get("error"):
+            return redirect(url_for("pacientes.pacientes"))
+
+        return render_template('direccion/pacientes/paciente_editar.html', paciente=paciente, id_paciente=id_paciente, error=None)
+
+    try:
+        form_data = request.form.to_dict()
+        form_data['id_paciente'] = id_paciente
+
+        paciente = get_paciente_by_id(id_paciente)["data"]
+
+        paciente_update = PacienteUpdate(**form_data)
+
+        result = actualizar_paciente(paciente_update.to_rpc())
+
+        if result and result.get("ok"):
+            return redirect(url_for("pacientes.pacientes"))
+ 
+        error = result.get("error") if result else "Error desconocido"
+    
+        return render_template('direccion/pacientes/paciente_editar.html', paciente=paciente, id_paciente=id_paciente, error=error)
+
+    except ValidationError as e:
+        error = str(e)
+        return render_template('direccion/pacientes/paciente_editar.html', paciente=paciente, id_paciente=id_paciente, error=error)
+
+    except Exception as e:
+        return render_template('direccion/pacientes/paciente_editar.html', paciente=paciente, id_paciente=id_paciente, error=error)

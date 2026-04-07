@@ -597,6 +597,43 @@ tbody tr:hover {
   border-radius: 4px;
 }
 
+/* Alerts */
+.alert {
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid transparent;
+}
+
+.alert-danger {
+  background-color: var(--red-light);
+  color: var(--red-dark);
+  border-color: #fecaca;
+}
+
+.alert-success {
+  background-color: var(--green-light);
+  color: var(--green-dark);
+  border-color: #a7f3d0;
+}
+
+.alert-info {
+  background-color: var(--purple-very-light);
+  color: var(--purple-primary);
+  border-color: var(--purple-light);
+}
+
+.alert-warning {
+  background-color: var(--yellow-light);
+  color: var(--yellow-dark);
+  border-color: #fde68a;
+}
+
 /* Search Bar */
 .search-bar {
   position: relative;

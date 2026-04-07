@@ -158,8 +158,8 @@
                             <td>{{ paciente.ultima_consulta or 'Sin registro' }}</td>
                             <td>
                                 <div style="display: flex; gap: 0.5rem;">
-                                    <a href="paciente_detalle.html" class="btn btn-secondary btn-icon" title="Ver Detalle">👁️</a>
-                                    <a href="paciente_editar.html" class="btn btn-secondary btn-icon" title="Editar">✏️</a>
+                                    <a href="#"	 class="btn btn-secondary btn-icon" title="Ver Detalle">👁️</a>
+                                    <a href="{{ url_for('pacientes.paciente_editar', id_paciente=paciente.id_paciente) }}"	 class="btn btn-secondary btn-icon" title="Editar">✏️</a>
                                     <a href="cita_crear.html" class="btn btn-primary btn-icon" title="Agendar Cita">📅</a>
                                 </div>
                             </td>

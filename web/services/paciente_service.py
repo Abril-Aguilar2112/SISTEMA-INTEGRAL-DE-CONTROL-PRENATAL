@@ -65,3 +65,41 @@ def crear_paciente(data):
         }).execute()
     except Exception as e:
         return {"error": str(e)}
+
+def registrar_paciente(data):
+    res = supabase.rpc(
+        "registrar_paciente_completo",
+        data
+    ).execute()
+
+    return res.data
+
+def actualizar_paciente(data):
+    res = supabase.rpc(
+        "actualizar_paciente",
+        data
+    ).execute()
+
+    return res.data
+
+def get_paciente_by_id(id_paciente: int):
+    try:
+        # Traemos los datos de todas las tablas relacionadas
+        p = supabase.table("paciente").select("*").eq("id_paciente", id_paciente).single().execute()
+        cp = supabase.table("control_prenatal").select("*").eq("id_paciente", id_paciente).single().execute()
+        us = supabase.table("unidad_salud").select("*").eq("id_paciente", id_paciente).single().execute()
+        cr = supabase.table("censo_reporte").select("*").eq("id_paciente", id_paciente).single().execute()
+        
+        # Combinamos todo en un solo diccionario para el formulario
+        paciente_data = {**p.data}
+        
+        if cp.data:
+            paciente_data.update(cp.data)
+        if us.data:
+            paciente_data.update(us.data)
+        if cr.data:
+            paciente_data.update(cr.data)
+            
+        return {"data": paciente_data, "error": None}
+    except Exception as e:
+        return {"data": None, "error": str(e)}
