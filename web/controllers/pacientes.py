@@ -1,5 +1,8 @@
-from flask import Blueprint, request, jsonify, session, redirect, url_for, render_template
+from flask import Blueprint, request, jsonify, session, redirect, url_for, render_template, flash
+from pydantic import ValidationError
 from services.paciente_service import get_pacientes
+from services.registro_paciente_service import registrar_paciente
+from models.paciente import PacienteCreate
 
 pacientes_bp = Blueprint('pacientes', __name__)
 
@@ -22,5 +25,27 @@ def pacientes():
         semanas=semanas
     )
 
-
     return render_template('direccion/pacientes/pacientes.html', pacientes=result)
+
+@pacientes_bp.route("/paciente_registro", methods=["GET", "POST"])
+def paciente_registro():
+    if request.method == "GET":
+        return render_template("direccion/pacientes/paciente_registro.html", error=None)
+ 
+    try:
+        paciente = PacienteCreate(**request.form)
+        print(paciente.to_rpc())
+        result   = registrar_paciente(paciente.to_rpc())
+        print(result)
+ 
+        if result and result.get("ok"):
+            return redirect(url_for("pacientes.pacientes"))
+ 
+        if result.get("error"):
+            error = result.get("error", "Error al registrar")
+        return render_template("direccion/pacientes/paciente_registro.html", error=error)
+
+    except ValidationError as e:
+        print("ERROR:", e)
+        flash(str(e), "error")
+        return render_template("direccion/pacientes/paciente_registro.html", error=str(e))

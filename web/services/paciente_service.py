@@ -54,3 +54,14 @@ def get_pacientes(page=1, search='', riesgo='', semanas=''):
             "page_size": 10,
             "error": str(e)
         }
+
+def crear_paciente(data):
+    try:
+        return supabase.table("paciente").insert({
+            "nombre": data["nombre"],
+            "edad": data["edad"],
+            "telefono": data.get("telefono"),
+            "semanas_gestacion": data.get("semanas_gestacion")
+        }).execute()
+    except Exception as e:
+        return {"error": str(e)}

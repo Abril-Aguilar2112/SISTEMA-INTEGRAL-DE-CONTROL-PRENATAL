@@ -11,6 +11,7 @@ def login():
         password = request.form['password'].strip()
 
         response = login_user(LoginRequest(correo=correo, password=password))
+        print(response)
 
         if response.get('error') == 'Invalid login credentials':
             response['error'] = 'Credenciales inválidas'
