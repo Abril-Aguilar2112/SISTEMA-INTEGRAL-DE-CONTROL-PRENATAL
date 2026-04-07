@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEP - Registro de Paciente</title>
+    <link rel="stylesheet" href="css/sigep-styles.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <div style="font-size: 2.5rem;">🤰</div>
+            <h2>SIGEP</h2>
+            <p>Sistema de Gestión Prenatal</p>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="dashboard.html">📊 Dashboard</a></li>
+            <li><a href="pacientes.html" class="active">👩 Pacientes</a></li>
+            <li><a href="citas.html">📅 Citas</a></li>
+            <li><a href="historial_clinico.html">📋 Expedientes Clínicos</a></li>
+            <li><a href="censo.html">📑 Censo</a></li>
+            <li><a href="reportes.html">📈 Reportes</a></li>
+            <li><a href="usuarios.html">👥 Usuarios</a></li>
+            <li style="margin-top: 2rem;"><a href="login.html">🚪 Cerrar Sesión</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1>Registro de Nueva Paciente</h1>
+                <p>Completa el formulario del censo prenatal</p>
+            </div>
+            <a href="pacientes.html" class="btn btn-secondary">← Volver</a>
+        </div>
+
+        <form action="pacientes.html" method="get">
+            <!-- Sección: Encabezado del Reporte -->
+            <div class="card mb-6">
+                <div class="card-header">
+                    <h2>📋 Encabezado del Reporte</h2>
+                </div>
+                <div class="grid grid-cols-3">
+                    <div class="form-group">
+                        <label class="form-label">Mes de Reporte</label>
+                        <select class="form-select" required>
+                            <option value="">Seleccionar...</option>
+                            <option>Enero</option>
+                            <option>Febrero</option>
+                            <option>Marzo</option>
+                            <option selected>Abril</option>
+                            <option>Mayo</option>
+                            <option>Junio</option>
+                            <option>Julio</option>
+                            <option>Agosto</option>
+                            <option>Septiembre</option>
+                            <option>Octubre</option>
+                            <option>Noviembre</option>
+                            <option>Diciembre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Fecha de Reporte</label>
+                        <input type="date" class="form-input" value="2026-04-06" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Semana Epidemiológica</label>
+                        <input type="number" class="form-input" placeholder="Ej: 14" min="1" max="53" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Zona de Atención -->
+            <div class="card mb-6">
+                <div class="card-header">
+                    <h2>🏥 Zona de Atención</h2>
+                </div>
+                <div class="grid grid-cols-3">
+                    <div class="form-group">
+                        <label class="form-label">Región</label>
+                        <select class="form-select" required>
+                            <option value="">Seleccionar...</option>
+                            <option>Norte</option>
+                            <option>Sur</option>
+                            <option>Centro</option>
+                            <option>Altos Norte</option>
+                            <option>Altos Sur</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">No. Consecutivo</label>
+                        <input type="text" class="form-input" placeholder="Ej: 001" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Fecha de Ingreso a CPN</label>
+                        <input type="date" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">CLUES IMB</label>
+                        <input type="text" class="form-input" placeholder="Código CLUES">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Municipio</label>
+                        <input type="text" class="form-input" placeholder="Ej: Guadalajara" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Localidad</label>
+                        <select class="form-select" required>
+                            <option value="">Seleccionar...</option>
+                            <option>Urbana</option>
+                            <option>Rural</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label class="form-label">Nombre de la Unidad de Salud</label>
+                        <input type="text" class="form-input" placeholder="Nombre completo de la unidad" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Zona de Servicios Médicos</label>
+                        <input type="text" class="form-input" placeholder="Zona">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Datos Personales -->
+            <div class="card mb-6">
+                <div class="card-header">
+                    <h2>👤 Datos Personales</h2>
+                </div>
+                <div class="grid grid-cols-2">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label class="form-label">Nombre Completo</label>
+                        <input type="text" class="form-input" placeholder="Nombre(s) Apellido Paterno Apellido Materno" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">CURP</label>
+                        <input type="text" class="form-input" placeholder="18 caracteres" maxlength="18" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Edad</label>
+                        <input type="number" class="form-input" placeholder="Años" min="10" max="60" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Lengua Indígena</label>
+                        <select class="form-select">
+                            <option value="">No aplica</option>
+                            <option>Náhuatl</option>
+                            <option>Maya</option>
+                            <option>Zapoteco</option>
+                            <option>Mixteco</option>
+                            <option>Otomí</option>
+                            <option>Otra</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Colonia</label>
+                        <input type="text" class="form-input" placeholder="Nombre de la colonia">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Antecedentes Ginecoobstétricos -->
+            <div class="card mb-6">
+                <div class="card-header">
+                    <h2>🤰 Antecedentes Ginecoobstétricos</h2>
+                </div>
+                <div class="grid grid-cols-3">
+                    <div class="form-group">
+                        <label class="form-label">Menarca (Edad)</label>
+                        <input type="number" class="form-input" placeholder="Años" min="8" max="20">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Gestas</label>
+                        <input type="number" class="form-input" placeholder="0" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Partos</label>
+                        <input type="number" class="form-input" placeholder="0" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cesáreas</label>
+                        <input type="number" class="form-input" placeholder="0" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Abortos</label>
+                        <input type="number" class="form-input" placeholder="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">FUR (Fecha Última Regla)</label>
+                        <input type="date" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Semanas de Gestación (SDG)</label>
+                        <input type="number" class="form-input" placeholder="0-42" min="0" max="42" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">FPP (Fecha Probable de Parto)</label>
+                        <input type="date" class="form-input" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Seguimiento en Consulta -->
+            <div class="card mb-6">
+                <div class="card-header">
+                    <h2>📅 Seguimiento en Consulta</h2>
+                </div>
+                <div class="grid grid-cols-3">
+                    <div class="form-group">
+                        <label class="form-label">Control Prenatal</label>
+                        <select class="form-select" required>
+                            <option value="">Seleccionar...</option>
+                            <option>Sí</option>
+                            <option>No</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Consultas Otorgadas</label>
+                        <input type="number" class="form-input" placeholder="0" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Factores de Riesgo</label>
+                        <select class="form-select">
+                            <option value="">Ninguno</option>
+                            <option>Edad menor a 20 años</option>
+                            <option>Edad mayor a 35 años</option>
+                            <option>Multiparidad</option>
+                            <option>Embarazo múltiple</option>
+                            <option>Otros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Riesgo Social</label>
+                        <select class="form-select">
+                            <option value="">Ninguno</option>
+                            <option>Violencia intrafamiliar</option>
+                            <option>Adicciones</option>
+                            <option>Falta de apoyo familiar</option>
+                            <option>Otros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado de Salud</label>
+                        <select class="form-select" required>
+                            <option value="">Seleccionar...</option>
+                            <option>Saludable</option>
+                            <option>Complicaciones menores</option>
+                            <option>Requiere monitoreo</option>
+                            <option>Alto riesgo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Riesgo Obstétrico</label>
+                        <select class="form-select" required>
+                            <option value="">Seleccionar...</option>
+                            <option>Bajo</option>
+                            <option>Medio</option>
+                            <option>Alto</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Fecha de Última Atención</label>
+                        <input type="date" class="form-input">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label class="form-label">Plan de Manejo</label>
+                        <input type="text" class="form-input" placeholder="Descripción del plan de manejo">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <a href="pacientes.html" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">💾 Guardar</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

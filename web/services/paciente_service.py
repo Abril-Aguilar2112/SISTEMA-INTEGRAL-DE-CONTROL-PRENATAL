@@ -1,33 +1,56 @@
 from utils.supabase_client import supabase
 
-def get_pacientes(page=1, limit=5, riesgo=None, search=None):
+def get_pacientes(page=1, search='', riesgo='', semanas=''):
     try:
-        query = supabase.table("pacientes_dashboard").select("*", count="exact")
+        per_page = 10
+        offset = (page - 1) * per_page
 
-        if riesgo and riesgo != "Todos":
-            query = query.eq("nivel_riesgo", riesgo.lower())
+        query = supabase.table("pacientes_dashboard").select("*", count="exact")
 
         if search:
             query = query.ilike("nombre", f"%{search}%")
 
-        start = (page - 1) * limit
-        end = start + limit - 1
+        if riesgo:
+            query = query.eq("nivel_riesgo", riesgo)
 
-        response = query.range(start, end).execute()
+        if semanas:
+            rangos = {
+                "1-12": (1, 12),
+                "13-24": (13, 24),
+                "25-36": (25, 36),
+                "37+": (37, None)
+            }
+
+            min_s, max_s = rangos.get(semanas, (None, None))
+
+            if min_s is not None:
+                query = query.gte("semanas_gestacion", min_s)
+
+            if max_s is not None:
+                query = query.lte("semanas_gestacion", max_s)
+
+        query = query.not_.is_("semanas_gestacion", None)
+
+        response = query.range(offset, offset + per_page - 1).execute()
+
+        total = response.count or 0
+        total_pages = (total // per_page) + (1 if total % per_page else 0)
 
         return {
-            "data": response.data,
-            "count": response.count,
+            "data": response.data or [],
             "page": page,
-            "total_pages": (response.count // limit) + 1,
+            "total_pages": total_pages,
+            "total_records": total,
+            "page_size": per_page,
             "error": None
         }
 
     except Exception as e:
         return {
             "data": [],
-            "count": 0,
-            "page": page,
+            "page": 1,
             "total_pages": 0,
+            "total_records": 0,
+            "page_size": 10,
             "error": str(e)
         }
