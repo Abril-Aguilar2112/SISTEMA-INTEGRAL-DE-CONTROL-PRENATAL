@@ -75,7 +75,9 @@
                     <span class="stat-badge positive">+12%</span>
                 </div>
                 <span class="stat-label">Total Pacientes</span>
-                <span class="stat-value">248</span>
+                {% if stats_data.data is not none %}
+                    <span class="stat-value">{{ stats_data.data.total_pacientes }}</span>
+                {% endif %}
             </div>
 
             <div class="stat-card">
@@ -86,7 +88,9 @@
                     <span class="stat-badge positive">+8%</span>
                 </div>
                 <span class="stat-label">Citas Programadas</span>
-                <span class="stat-value">64</span>
+                {% if stats_data.data is not none %}
+                    <span class="stat-value">{{ stats_data.data.citas_programadas }}</span>
+                {% endif %} 
             </div>
 
             <div class="stat-card">
@@ -97,7 +101,9 @@
                     <span class="stat-badge negative">-5%</span>
                 </div>
                 <span class="stat-label">Alto Riesgo</span>
-                <span class="stat-value">23</span>
+                {% if stats_data.data is not none %}
+                    <span class="stat-value">{{ stats_data.data.alto_riesgo }}</span>
+                {% endif %}     
             </div>
 
             <div class="stat-card">
@@ -108,7 +114,9 @@
                     <span class="stat-badge positive">+3%</span>
                 </div>
                 <span class="stat-label">Inasistencias</span>
-                <span class="stat-value">12</span>
+                {% if stats_data.data is not none %}
+                    <span class="stat-value">{{ stats_data.data.inasistencias }}</span>
+                {% endif %}         
             </div>
         </div>
 
@@ -119,48 +127,24 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                     <h2>Actividad Reciente</h2>
                 </div>
-                <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <h4>María González</h4>
-                            <p>Cita programada</p>
+                {% if actividad_reciente.data == [] %}
+                    <p>No hay actividad reciente</p>
+                {% else %}
+                    {% for item in actividad_reciente.data %}
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-info">
+                                    <h4>{{ item["nombre"] }}</h4>
+                                    <p>{{ item["accion"] }}</p>
+                                </div>
+                                <div class="activity-meta">
+                                    <span class="activity-time">{{ item["fecha"] }}</span>
+                                    <span class="badge badge-success">{{ item["estado"] }}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="activity-meta">
-                            <span class="activity-time">Hace 10 min</span>
-                            <span class="badge badge-success">Completado</span>
-                        </div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <h4>Ana Martínez</h4>
-                            <p>Inasistencia reportada</p>
-                        </div>
-                        <div class="activity-meta">
-                            <span class="activity-time">Hace 25 min</span>
-                            <span class="badge badge-warning">Pendiente</span>
-                        </div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <h4>Laura Sánchez</h4>
-                            <p>Expediente actualizado</p>
-                        </div>
-                        <div class="activity-meta">
-                            <span class="activity-time">Hace 1 hora</span>
-                            <span class="badge badge-info">Info</span>
-                        </div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-info">
-                            <h4>Carmen López</h4>
-                            <p>Nuevo registro</p>
-                        </div>
-                        <div class="activity-meta">
-                            <span class="activity-time">Hace 2 horas</span>
-                            <span class="badge badge-success">Completado</span>
-                        </div>
-                    </div>
-                </div>
+                    {% endfor %}
+                {% endif %}
             </div>
 
             <!-- Quick Stats -->
@@ -169,44 +153,50 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20v-6M6 20V10M18 20V4"></path></svg>
                     <h2>Estadísticas Rápidas</h2>
                 </div>
-                <div class="stats-list">
-                    <div class="progress-item">
-                        <div class="progress-header">
-                            <span class="progress-label">Pacientes de Alto Riesgo</span>
-                            <span class="progress-value">9.3%</span>
+                {% if estadistica_dashboard.data is not none %}
+                    {% set pct_alto_riesgo = estadistica_dashboard.data.alto_riesgo or 0.0 %}
+                    {% set pct_asistencia = estadistica_dashboard.data.asistencia or 0.0 %}
+                    {% set pct_controles_completados = estadistica_dashboard.data.controles_completados or 0.0 %}
+                    {% set pct_pendientes_seguimiento = estadistica_dashboard.data.pendientes_seguimiento or 0.0 %}
+                    <div class="stats-list">
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="progress-label">Pacientes de Alto Riesgo</span>
+                                <span class="progress-value">{{ pct_alto_riesgo }}%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: {{ pct_alto_riesgo }}%; background-color: var(--purple-primary);"></div>
+                            </div>
                         </div>
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" style="width: 9.3%; background-color: var(--purple-primary);"></div>
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="progress-label">Tasa de Asistencia</span>
+                                <span class="progress-value">{{ pct_asistencia }}%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: {{ pct_asistencia }}%; background-color: var(--blue);"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="progress-label">Controles Completados</span>
+                                <span class="progress-value">{{ pct_controles_completados }}%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: {{ pct_controles_completados }}%; background-color: var(--green);"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="progress-label">Pendientes de Seguimiento</span>
+                                <span class="progress-value">{{ pct_pendientes_seguimiento }}%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: {{ pct_pendientes_seguimiento }}%; background-color: var(--yellow-dark);"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="progress-item">
-                        <div class="progress-header">
-                            <span class="progress-label">Tasa de Asistencia</span>
-                            <span class="progress-value">81.3%</span>
-                        </div>
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" style="width: 81.3%; background-color: var(--blue);"></div>
-                        </div>
-                    </div>
-                    <div class="progress-item">
-                        <div class="progress-header">
-                            <span class="progress-label">Controles Completados</span>
-                            <span class="progress-value">76.2%</span>
-                        </div>
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" style="width: 76.2%; background-color: var(--green);"></div>
-                        </div>
-                    </div>
-                    <div class="progress-item">
-                        <div class="progress-header">
-                            <span class="progress-label">Pendientes de Seguimiento</span>
-                            <span class="progress-value">18.7%</span>
-                        </div>
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" style="width: 18.7%; background-color: var(--yellow-dark);"></div>
-                        </div>
-                    </div>
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>

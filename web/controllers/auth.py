@@ -12,7 +12,8 @@ def login():
 
         response = login_user(LoginRequest(correo=correo, password=password))
 
-        if response.get('error'):
+        if response.get('error') == 'Invalid login credentials':
+            response['error'] = 'Credenciales inválidas'
             return render_template('login.html', response=response)
 
         if response.get('data'):
