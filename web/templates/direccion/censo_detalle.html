@@ -5,12 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SIGEP – Registro de Censo</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/sigep-style.css') }}">
+  <script src="{{ url_for('static', filename='js/censo-edit.js') }}" defer></script>
 </head>
 <body>
 
-<!-- ════════════════════════════════════════
-     SIDEBAR
-════════════════════════════════════════ -->
 <aside class="sidebar">
   <div class="sidebar-user">
     <div class="user-avatar">S</div>
@@ -73,10 +71,22 @@
   </div>
 </aside>
 
-<!-- ════════════════════════════════════════
-     MAIN CONTENT
-════════════════════════════════════════ -->
 <main class="main-content">
+  <div class="print-header hidden">
+    <div class="print-header-top">
+      <div class="govt-logo">
+        <div class="logo-placeholder">SECRETARÍA DE SALUD</div>
+      </div>
+      <div class="print-title">
+        <h2>SISTEMA INTEGRAL DE GESTIÓN PRENATAL (SIGEP)</h2>
+        <h3>CENSO NOMINAL DE SEGUIMIENTO PRENATAL</h3>
+      </div>
+    </div>
+    <div class="print-metadata">
+      <span><strong>EXPEDIENTE:</strong> {{ censo.data.no_consecutivo | default('S/N', true) }}</span>
+      <span><strong>FECHA DE EMISIÓN:</strong> {{ today_date }}</span>
+    </div>
+  </div>
 
   <!-- Page header -->
   <div class="content-header">
@@ -85,14 +95,28 @@
       <p>Visualización del expediente de seguimiento de la usuaria</p>
     </div>
     <div class="header-actions">
-      <a href="#" class="btn btn-secondary">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        Editar Registro
-      </a>
-      <a href="#" class="btn btn-primary">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-        Imprimir
-      </a>
+      <div id="initial-actions">
+        <a href="#" id="edit-btn" class="btn btn-secondary">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Editar Registro
+        </a>
+        <a href="#" id="print-btn" class="btn btn-primary">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Exportar PDF
+        </a>
+      </div>
+      <div id="edit-actions" class="hidden">
+        <button type="button" id="cancel-btn" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" form="censo-form" id="save-btn" class="btn btn-primary">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor para mensajes (Éxito/Error) -->
+  <div id="ui-message-container" class="hidden">
+    <div id="ui-message" class="alert">
+      <span id="ui-message-text"></span>
+      <button type="button" class="close-msg" onclick="this.parentElement.parentElement.classList.add('hidden')">&times;</button>
     </div>
   </div>
 
@@ -103,398 +127,519 @@
   </div>
 
 
-  <!-- ── 1. Encabezado del Reporte ── -->
-  <section class="section-card">
-    <div class="section-header">
-      <div class="section-header-icon">📋</div>
-      <h2>Encabezado del Reporte</h2>
-      <span class="section-number">Sección 1</span>
-    </div>
-    <div class="data-grid">
-      <div class="data-field">
-        <span class="data-label">Mes de Reporte</span>
-        <span class="data-value">{{ censo.mes_reporte | default('Marzo 2026') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Fecha de Reporte</span>
-        <span class="data-value">{{ censo.fecha_reporte | default('31/03/2026') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Semana Epidemiológica</span>
-        <span class="data-value">{{ censo.semana_epidemiologica | default('13') }}</span>
-      </div>
-    </div>
-  </section>
+  </div>
 
 
-  <!-- ── 2. Zona de Atención ── -->
-  <section class="section-card">
-    <div class="section-header">
-      <div class="section-header-icon">🏥</div>
-      <h2>Zona de Atención</h2>
-      <span class="section-number">Sección 2</span>
-    </div>
-    <div class="data-grid">
-      <div class="data-field">
-        <span class="data-label">Región</span>
-        <span class="data-value">{{ censo.region | default('Región Sur') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">No. Consecutivo</span>
-        <span class="data-value">{{ censo.no_consecutivo | default('001') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Fecha de Ingreso a CPN</span>
-        <span class="data-value">{{ censo.fecha_ingreso_cpn | default('15/01/2026') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">CLUES IMB</span>
-        <span class="data-value">{{ censo.clues_imb | default('CSSSA000001') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Municipio</span>
-        <span class="data-value">{{ censo.municipio_zona | default('Tuxtla Gutiérrez') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Tipo de Localidad</span>
-        <span class="data-value">{{ censo.tipo_localidad | default('Urbana') }}</span>
-      </div>
-      <div class="data-field" style="grid-column: span 2;">
-        <span class="data-label">Nombre de la Unidad de Salud</span>
-        <span class="data-value">{{ censo.nombre_unidad | default('Centro de Salud Urbano No. 1') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Zona de Servicios Médicos / Hospital Resolutivo</span>
-        <span class="data-value">{{ censo.zona_servicios | default('Zona 01') }}</span>
-      </div>
-    </div>
-  </section>
+  <form id="censo-form" action="{{ url_for('censo.censo_actualizar', id_paciente=id_paciente) }}" method="POST">
+    <input type="hidden" name="id_paciente" value="{{ censo.data.id_paciente }}">
 
-
-  <!-- ── 3. Datos Personales de la Usuaria ── -->
-  <section class="section-card">
-    <div class="section-header">
-      <div class="section-header-icon">👤</div>
-      <h2>Datos Personales de la Usuaria</h2>
-      <span class="section-number">Sección 3</span>
-    </div>
-    <div class="data-grid">
-      <div class="data-field" style="grid-column: span 2;">
-        <span class="data-label">Nombre Completo</span>
-        <span class="data-value">{{ usuaria.nombre | default('GARCÍA LÓPEZ MARÍA') }}</span>
+    <section class="section-card">
+      <div class="section-header">
+        <div class="section-header-icon">📋</div>
+        <h2>Encabezado del Reporte</h2>
+        <span class="section-number">Sección 1</span>
       </div>
-      <div class="data-field">
-        <span class="data-label">Edad</span>
-        <span class="data-value">{{ usuaria.edad | default('31') }} años</span>
-      </div>
-      <div class="data-field" style="grid-column: span 2;">
-        <span class="data-label">CURP</span>
-        <span class="data-value" style="font-family: monospace; letter-spacing: 0.05em;">{{ usuaria.curp | default('GALM950315MCCRPR03') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Lengua Indígena</span>
-        <span class="data-value">{{ usuaria.lengua_indigena | default('No') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Municipio</span>
-        <span class="data-value">{{ usuaria.municipio | default('Tuxtla Gutiérrez') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Colonia</span>
-        <span class="data-value">{{ usuaria.colonia | default('Centro') }}</span>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ── 4. Antecedentes Ginecoobstétricos ── -->
-  <section class="section-card">
-    <div class="section-header">
-      <div class="section-header-icon">🩺</div>
-      <h2>Antecedentes Ginecoobstétricos</h2>
-      <span class="section-number">Sección 4</span>
-    </div>
-
-    <!-- Obstetric summary pills -->
-    <div style="display:flex; flex-wrap:wrap; gap:0.75rem; margin-bottom:1.5rem;">
-      <div style="background:var(--purple-very-light); border:1px solid var(--purple-light); border-radius:1rem; padding:0.75rem 1.25rem; text-align:center; min-width:90px;">
-        <div style="font-size:1.5rem; font-weight:700; color:var(--purple-primary);">{{ antecedentes.gestas | default('2') }}</div>
-        <div style="font-size:0.6875rem; font-weight:600; color:var(--gray-500); text-transform:uppercase;">Gestas</div>
-      </div>
-      <div style="background:var(--green-light); border:1px solid #a7f3d0; border-radius:1rem; padding:0.75rem 1.25rem; text-align:center; min-width:90px;">
-        <div style="font-size:1.5rem; font-weight:700; color:var(--green-dark);">{{ antecedentes.partos | default('1') }}</div>
-        <div style="font-size:0.6875rem; font-weight:600; color:var(--gray-500); text-transform:uppercase;">Partos</div>
-      </div>
-      <div style="background:var(--yellow-light); border:1px solid #fde68a; border-radius:1rem; padding:0.75rem 1.25rem; text-align:center; min-width:90px;">
-        <div style="font-size:1.5rem; font-weight:700; color:var(--yellow-dark);">{{ antecedentes.cesareas | default('0') }}</div>
-        <div style="font-size:0.6875rem; font-weight:600; color:var(--gray-500); text-transform:uppercase;">Cesáreas</div>
-      </div>
-      <div style="background:var(--red-light); border:1px solid #fecaca; border-radius:1rem; padding:0.75rem 1.25rem; text-align:center; min-width:90px;">
-        <div style="font-size:1.5rem; font-weight:700; color:var(--red-dark);">{{ antecedentes.abortos | default('0') }}</div>
-        <div style="font-size:0.6875rem; font-weight:600; color:var(--gray-500); text-transform:uppercase;">Abortos</div>
-      </div>
-    </div>
-
-    <div class="section-divider"></div>
-
-    <div class="data-grid">
-      <div class="data-field">
-        <span class="data-label">Menarca</span>
-        <span class="data-value">{{ antecedentes.menarca | default('13') }} años</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Fecha de Última Regla (FUR)</span>
-        <span class="data-value">{{ antecedentes.fur | default('01/12/2025') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Semanas de Gestación</span>
-        <span class="data-value">{{ antecedentes.semanas_gestacion | default('17') }} SDG</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Fecha Probable de Parto (FPP)</span>
-        <span class="data-value">{{ antecedentes.fpp | default('07/09/2026') }}</span>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ── 5. Seguimiento en la Consulta ── -->
-  <section class="section-card">
-    <div class="section-header">
-      <div class="section-header-icon">📅</div>
-      <h2>Seguimiento en la Consulta</h2>
-      <span class="section-number">Sección 5</span>
-    </div>
-    <div class="data-grid">
-      <div class="data-field">
-        <span class="data-label">Control Prenatal</span>
-        <span class="data-value">{{ seguimiento.control_prenatal | default('Primer Trimestre') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Número de Consultas</span>
-        <span class="data-value">{{ seguimiento.consultas | default('3') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Fecha Última Atención</span>
-        <span class="data-value">{{ seguimiento.fecha_ultima_atencion | default('25/03/2026') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Estado de Salud</span>
-        <span class="data-value">
-          <span class="badge-value badge-green">{{ seguimiento.estado_salud | default('Estable') }}</span>
-        </span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Riesgo Obstétrico</span>
-        <span class="data-value">
-          <span class="badge-value badge-green">{{ seguimiento.riesgo_obstetrico | default('Bajo') }}</span>
-        </span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Factores de Riesgo</span>
-        <span class="data-value">{{ seguimiento.factores_riesgo | default('Ninguno') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Riesgo Social</span>
-        <span class="data-value">{{ seguimiento.riesgo_social | default('Ninguno') }}</span>
-      </div>
-      <div class="data-field" style="grid-column: span 2;">
-        <span class="data-label">Plan de Manejo</span>
-        <span class="data-value">{{ seguimiento.plan_manejo | default('Control prenatal de rutina') }}</span>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ── 6. Acciones Preventivas ── -->
-  <section class="section-card">
-    <div class="section-header">
-      <div class="section-header-icon">💉</div>
-      <h2>Acciones Preventivas</h2>
-      <span class="section-number">Sección 6</span>
-    </div>
-
-    <p style="font-size:0.8125rem; color:var(--gray-500); margin-bottom:1rem;">Vacunas aplicadas</p>
-    <div class="actions-chips" style="margin-bottom:1.5rem;">
-      <span class="chip">✓ TD – Aplicada</span>
-      <span class="chip">✓ TDPA – Aplicada</span>
-      <span class="chip">✓ Influenza – Aplicada</span>
-      <span class="chip">✓ COVID – Aplicada</span>
-    </div>
-
-    <div class="section-divider"></div>
-    <p style="font-size:0.8125rem; color:var(--gray-500); margin:1rem 0 0.75rem;">Atenciones adicionales</p>
-    <div class="actions-chips">
-      <span class="chip date">🦷 Estomatología – {{ acciones.estomatologia | default('2026-02-10') }}</span>
-      <span class="chip date">🥗 Nutrición – {{ acciones.nutricion | default('2026-02-15') }}</span>
-    </div>
-  </section>
-
-
-  <!-- ── 7. Detecciones ── -->
-  <section class="section-card">
-    <div class="section-header">
-      <div class="section-header-icon">🔬</div>
-      <h2>Detecciones</h2>
-      <span class="section-number">Sección 7</span>
-    </div>
-    <div class="detections-grid">
-
-      <!-- VIH -->
-      <div class="detection-card">
-        <h4>VIH</h4>
-        <div class="detection-field">
-          <div class="detection-label">Fecha</div>
-          <div class="detection-value empty">{{ detecciones.vih.fecha | default('dd/mm/aaaa') }}</div>
+      <div class="data-grid">
+        <div class="data-field">
+          <span class="data-label">Mes de Reporte</span>
+          <span class="data-value">{{ censo.data.mes_reporte | default('-', true) }}</span>
+          <select name="mes_reporte" class="hidden" required>
+            {% set meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'] %}
+            {% for mes in meses %}
+              <option value="{{ mes }}" {% if censo.data.mes_reporte == mes %}selected{% endif %}>{{ mes }}</option>
+            {% endfor %}
+          </select>
         </div>
-        <div class="detection-field">
-          <div class="detection-label">Trimestre</div>
-          <div class="detection-value empty">{{ detecciones.vih.trimestre | default('—') }}</div>
+        <div class="data-field">
+          <span class="data-label">Fecha de Reporte</span>
+          <span class="data-value">{{ censo.data.fecha_reporte | default('-', true) }}</span>
+          <input type="date" name="fecha_reporte" value="{{ censo.data.fecha_reporte }}" class="hidden" required>
         </div>
-        <div class="detection-field">
-          <div class="detection-label">Resultado</div>
-          <div class="detection-value empty">{{ detecciones.vih.resultado | default('—') }}</div>
+        <div class="data-field">
+          <span class="data-label">Semana Epidemiológica</span>
+          <span class="data-value">{{ censo.data.semana_epidemiologica | default('-', true) }}</span>
+          <input type="number" name="semana_epidemiologica" value="{{ censo.data.semana_epidemiologica }}" class="hidden" min="1" max="53" required>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section-card">
+      <div class="section-header">
+        <div class="section-header-icon">🏥</div>
+        <h2>Zona de Atención</h2>
+        <span class="section-number">Sección 2</span>
+      </div>
+      <div class="data-grid">
+        <div class="data-field">
+          <span class="data-label">Región</span>
+          <span class="data-value">{{ censo.data.region | default('-', true) }}</span>
+          <input type="text" name="region" value="{{ censo.data.region }}" class="hidden">
+        </div>
+        <div class="data-field">
+          <span class="data-label">No. Consecutivo</span>
+          <span class="data-value">{{ censo.data.no_consecutivo | default('-', true) }}</span>
+          <input type="text" name="no_consecutivo" value="{{ censo.data.no_consecutivo }}" class="hidden">
+        </div>
+        <div class="data-field">
+          <span class="data-label">Fecha de Ingreso a CPN</span>
+          <span class="data-value">{{ censo.data.fecha_ingreso_cpn | default('-', true) }}</span>
+          <input type="date" name="fecha_ingreso_cpn" value="{{ censo.data.fecha_ingreso_cpn }}" class="hidden" disabled>
+        </div>
+        <div class="data-field">
+          <span class="data-label">CLUES IMB</span>
+          <span class="data-value">{{ censo.data.clues_imb | default('-', true) }}</span>
+          <input type="text" name="clues_imb" value="{{ censo.data.clues_imb }}" class="hidden" disabled>
+        </div>
+        <div class="data-field">
+          <span class="data-label">Municipio</span>
+          <span class="data-value">{{ censo.data.municipio | default('-', true) }}</span>
+          <input type="text" name="municipio" value="{{ censo.data.municipio }}" class="hidden">
+        </div>
+        <div class="data-field">
+          <span class="data-label">Tipo de Localidad</span>
+          <span class="data-value">{{ censo.data.tipo_localidad | default('-', true) }}</span>
+          <input type="text" name="tipo_localidad" value="{{ censo.data.tipo_localidad }}" class="hidden">
+        </div>
+        <div class="data-field" style="grid-column: span 2;">
+          <span class="data-label">Nombre de la Unidad de Salud</span>
+          <span class="data-value">{{ censo.data.nombre_unidad | default('-', true) }}</span>
+          <input type="text" name="nombre_unidad" value="{{ censo.data.nombre_unidad }}" class="hidden">
+        </div>
+        <div class="data-field">
+          <span class="data-label">Zona de Servicios Médicos / Hospital Resolutivo</span>
+          <span class="data-value">{{ censo.data.zona_servicios | default('-', true) }}</span>
+          <input type="text" name="zona_servicios" value="{{ censo.data.zona_servicios }}" class="hidden">
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section-card">
+      <div class="section-header">
+        <div class="section-header-icon">👤</div>
+        <h2>Datos Personales de la Usuaria</h2>
+        <span class="section-number">Sección 3</span>
+      </div>
+      <div class="data-grid">
+        <div class="data-field" style="grid-column: span 2;">
+          <span class="data-label">Nombre Completo</span>
+          <span class="data-value">{{ censo.data.nombre | default('-', true) }}</span>
+          <input type="text" name="nombre" value="{{ censo.data.nombre }}" class="hidden" required minlength="3">
+        </div>
+        <div class="data-field">
+          <span class="data-label">Edad</span>
+          <span class="data-value">{{ censo.data.edad | default('-', true) }}{% if censo.data.edad and censo.data.edad != 'None' %} años{% endif %}</span>
+          <input type="number" name="edad" value="{{ censo.data.edad }}" class="hidden" required min="10" max="60">
+        </div>
+        <div class="data-field" style="grid-column: span 2;">
+          <span class="data-label">CURP</span>
+          <span class="data-value" style="font-family: monospace; letter-spacing: 0.05em;">{{ censo.data.curp | default('RUCX070408HDFLNN01', true) }}</span>
+          <input type="text" name="curp" value="{{ censo.data.curp }}" class="hidden" pattern="[A-Z]{4}[0-9]{6}[H,M][A-Z]{5}[A-Z0-9]{2}" title="Ingrese un CURP válido de 18 caracteres">
+        </div>
+        <div class="data-field">
+          <span class="data-label">Lengua Indígena</span>
+          <span class="data-value">{{ censo.data.lengua_indigena | default('Ninguna', true) }}</span>
+          <select name="lengua_indigena" class="hidden">
+            {% set lenguas = ['Ninguna', 'Náhuatl', 'Maya', 'Tseltal', 'Tsotsil', 'Mixteco', 'Zapoteco', 'Otomí', 'Totonaco', 'Chol', 'Mazateco', 'Otro'] %}
+            {% for lengua in lenguas %}
+              <option value="{{ lengua }}" {% if censo.data.lengua_indigena == lengua %}selected{% endif %}>{{ lengua }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="data-field">
+          <span class="data-label">Municipio</span>
+          <span class="data-value">{{ censo.data.municipio | default('-', true) }}</span>
+          <input type="text" name="municipio_personal" value="{{ censo.data.municipio }}" class="hidden" disabled>
+        </div>
+        <div class="data-field">
+          <span class="data-label">Colonia</span>
+          <span class="data-value">{{ censo.data.colonia | default('Centro', true) }}</span>
+          <input type="text" name="colonia" value="{{ censo.data.colonia }}" class="hidden" required>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section-card">
+      <div class="section-header">
+        <div class="section-header-icon">🩺</div>
+        <h2>Antecedentes Ginecoobstétricos</h2>
+        <span class="section-number">Sección 4</span>
+      </div>
+
+      <!-- Obstetric summary pills -->
+      <div style="display:flex; flex-wrap:wrap; gap:0.75rem; margin-bottom:1.5rem;">
+        <div style="background:var(--purple-very-light); border:1px solid var(--purple-light); border-radius:1rem; padding:0.75rem 1.25rem; text-align:center; min-width:90px;">
+          <div style="font-size:1.5rem; font-weight:700; color:var(--purple-primary);">{{ censo.data.gestas | default('0', true) }}</div>
+          <input type="number" name="gestas" value="{{ censo.data.gestas }}" class="hidden" style="width: 60px; font-size: 1.2rem; text-align: center;">
+          <div style="font-size:0.6875rem; font-weight:600; color:var(--gray-500); text-transform:uppercase;">Gestas</div>
+        </div>
+        <div style="background:var(--green-light); border:1px solid #a7f3d0; border-radius:1rem; padding:0.75rem 1.25rem; text-align:center; min-width:90px;">
+          <div style="font-size:1.5rem; font-weight:700; color:var(--green-dark);">{{ censo.data.partos | default('0', true) }}</div>
+          <input type="number" name="partos" value="{{ censo.data.partos }}" class="hidden" style="width: 60px; font-size: 1.2rem; text-align: center;">
+          <div style="font-size:0.6875rem; font-weight:600; color:var(--gray-500); text-transform:uppercase;">Partos</div>
+        </div>
+        <div style="background:var(--yellow-light); border:1px solid #fde68a; border-radius:1rem; padding:0.75rem 1.25rem; text-align:center; min-width:90px;">
+          <div style="font-size:1.5rem; font-weight:700; color:var(--yellow-dark);">{{ censo.data.cesareas | default('0', true) }}</div>
+          <input type="number" name="cesareas" value="{{ censo.data.cesareas }}" class="hidden" style="width: 60px; font-size: 1.2rem; text-align: center;">
+          <div style="font-size:0.6875rem; font-weight:600; color:var(--gray-500); text-transform:uppercase;">Cesáreas</div>
+        </div>
+        <div style="background:var(--red-light); border:1px solid #fecaca; border-radius:1rem; padding:0.75rem 1.25rem; text-align:center; min-width:90px;">
+          <div style="font-size:1.5rem; font-weight:700; color:var(--red-dark);">{{ censo.data.abortos | default('0', true) }}</div>
+          <input type="number" name="abortos" value="{{ censo.data.abortos }}" class="hidden" style="width: 60px; font-size: 1.2rem; text-align: center;">
+          <div style="font-size:0.6875rem; font-weight:600; color:var(--gray-500); text-transform:uppercase;">Abortos</div>
         </div>
       </div>
 
-      <!-- VDRL -->
-      <div class="detection-card">
-        <h4>VDRL</h4>
-        <div class="detection-field">
-          <div class="detection-label">Fecha</div>
-          <div class="detection-value empty">{{ detecciones.vdrl.fecha | default('dd/mm/aaaa') }}</div>
+      <div class="section-divider"></div>
+
+      <div class="data-grid">
+        <div class="data-field">
+          <span class="data-label">Menarca</span>
+          <span class="data-value no-edit">{{ censo.data.menarca | default('13', true) }} años</span>
+          <input type="number" name="menarca" value="{{ censo.data.menarca }}" class="hidden" disabled>
         </div>
-        <div class="detection-field">
-          <div class="detection-label">Trimestre</div>
-          <div class="detection-value empty">{{ detecciones.vdrl.trimestre | default('—') }}</div>
+        <div class="data-field">
+          <span class="data-label">Fecha de Última Regla (FUR)</span>
+          <span class="data-value no-edit">{{ censo.data.fur | default('-', true) }}</span>
+          <input type="date" name="fur" value="{{ censo.data.fur }}" class="hidden" disabled>
         </div>
-        <div class="detection-field">
-          <div class="detection-label">Resultado</div>
-          <div class="detection-value empty">{{ detecciones.vdrl.resultado | default('—') }}</div>
+        <div class="data-field">
+          <span class="data-label">Semanas de Gestación</span>
+          <span class="data-value">{{ censo.data.semanas_gestacion | default('-', true) }}{% if censo.data.semanas_gestacion and censo.data.semanas_gestacion != 'None' %} SDG{% endif %}</span>
+          <input type="number" name="semanas_gestacion" value="{{ censo.data.semanas_gestacion }}" class="hidden" required min="1" max="42">
+        </div>
+        <div class="data-field">
+          <span class="data-label">Fecha Probable de Parto (FPP)</span>
+          <span class="data-value no-edit">{{ censo.data.fpp | default('-', true) }}</span>
+          <input type="date" name="fpp" value="{{ censo.data.fpp }}" class="hidden" disabled>
         </div>
       </div>
+    </section>
 
-      <!-- Hepatitis C -->
-      <div class="detection-card">
-        <h4>Hepatitis C</h4>
-        <div class="detection-field">
-          <div class="detection-label">Fecha</div>
-          <div class="detection-value empty">{{ detecciones.hepatitis_c.fecha | default('dd/mm/aaaa') }}</div>
+
+    <section class="section-card">
+      <div class="section-header">
+        <div class="section-header-icon">📅</div>
+        <h2>Seguimiento en la Consulta</h2>
+        <span class="section-number">Sección 5</span>
+      </div>
+      <div class="data-grid">
+        <div class="data-field">
+          <span class="data-label">Control Prenatal</span>
+          <span class="data-value no-edit">{{ censo.data.control_prenatal_inicio | default('Primer Trimestre', true) }}</span>
+          <input type="text" name="control_prenatal_inicio" value="{{ censo.data.control_prenatal_inicio }}" class="hidden" disabled>
         </div>
-        <div class="detection-field">
-          <div class="detection-label">Trimestre</div>
-          <div class="detection-value empty">{{ detecciones.hepatitis_c.trimestre | default('—') }}</div>
+        <div class="data-field">
+          <span class="data-label">Número de Consultas</span>
+          <span class="data-value">{{ censo.data.consultas_otorgadas | default('0', true) }}</span>
+          <input type="number" name="consultas_otorgadas" value="{{ censo.data.consultas_otorgadas }}" class="hidden" required min="0" max="20">
         </div>
-        <div class="detection-field">
-          <div class="detection-label">Resultado</div>
-          <div class="detection-value empty">{{ detecciones.hepatitis_c.resultado | default('—') }}</div>
+        <div class="data-field">
+          <span class="data-label">Fecha Última Atención</span>
+          <span class="data-value no-edit">{{ censo.data.fecha_ultima_atencion | default('-', true) }}</span>
+          <input type="date" name="fecha_ultima_atencion" value="{{ censo.data.fecha_ultima_atencion }}" class="hidden" disabled>
+        </div>
+        <div class="data-field">
+          <span class="data-label">Estado de Salud</span>
+          <span class="data-value">
+            <span class="status-text 
+              {% if censo.data.estado_salud|lower == 'crítico' or censo.data.estado_salud|lower == 'grave' or censo.data.estado_salud|lower == 'alto riesgo' %}text-red
+              {% elif censo.data.estado_salud|lower == 'delicado' %}text-yellow
+              {% else %}text-green
+              {% endif %}
+            ">{{ censo.data.estado_salud | default('-', true) }}</span>
+          </span>
+          <select name="estado_salud" class="hidden">
+            <option value="estable" {% if censo.data.estado_salud|lower == 'estable' %}selected{% endif %}>Estable</option>
+            <option value="delicado" {% if censo.data.estado_salud|lower == 'delicado' %}selected{% endif %}>Delicado</option>
+            <option value="alto riesgo" {% if censo.data.estado_salud|lower == 'alto riesgo' %}selected{% endif %}>Alto Riesgo</option>
+            <option value="grave" {% if censo.data.estado_salud|lower == 'grave' %}selected{% endif %}>Grave</option>
+            <option value="crítico" {% if censo.data.estado_salud|lower == 'crítico' %}selected{% endif %}>Crítico</option>
+          </select>
+        </div>
+        <div class="data-field">
+          <span class="data-label">Riesgo Obstétrico</span>
+          <span class="data-value">
+            <span class="status-text 
+              {% if censo.data.riesgo_obstetrico|lower == 'alto' %}text-red
+              {% elif censo.data.riesgo_obstetrico|lower == 'medio' %}text-yellow
+              {% else %}text-green
+              {% endif %}
+            ">{{ censo.data.riesgo_obstetrico | default('-', true) }}</span>
+          </span>
+          <select name="riesgo_obstetrico" class="hidden">
+            <option value="bajo" {% if censo.data.riesgo_obstetrico|lower == 'bajo' %}selected{% endif %}>Bajo</option>
+            <option value="medio" {% if censo.data.riesgo_obstetrico|lower == 'medio' %}selected{% endif %}>Medio</option>
+            <option value="alto" {% if censo.data.riesgo_obstetrico|lower == 'alto' %}selected{% endif %}>Alto</option>
+          </select>
+        </div>
+        <div class="data-field">
+          <span class="data-label">Factores de Riesgo</span>
+          <span class="data-value">{{ censo.data.factores_riesgo | default('-', true) }}</span>
+          <textarea name="factores_riesgo" class="hidden" rows="2">{{ censo.data.factores_riesgo }}</textarea>
+        </div>
+        <div class="data-field">
+          <span class="data-label">Riesgo Social</span>
+          <span class="data-value no-edit">{{ censo.data.riesgo_social | default('-', true) | capitalize }}</span>
+          <input type="text" name="riesgo_social" value="{{ censo.data.riesgo_social }}" class="hidden" disabled>
+        </div>
+        <div class="data-field" style="grid-column: span 2;">
+          <span class="data-label">Plan de Manejo (Diagnóstico y Tratamiento)</span>
+          <span class="data-value no-edit">
+              <strong>D:</strong> {{ censo.data.diagnostico | default('-', true) }} <br>
+              <strong>T:</strong> {{ censo.data.tratamiento | default('-', true) }}
+          </span>
+          <div class="hidden">
+            <strong>D:</strong> <input type="text" name="diagnostico" value="{{ censo.data.diagnostico }}" disabled> <br>
+            <strong>T:</strong> <input type="text" name="tratamiento" value="{{ censo.data.tratamiento }}" disabled>
+          </div>
         </div>
       </div>
+    </section>
 
-      <!-- Diabetes Gestacional -->
-      <div class="detection-card">
-        <h4>Diabetes Gestacional</h4>
-        <div class="detection-field">
-          <div class="detection-label">Fecha</div>
-          <div class="detection-value empty">{{ detecciones.diabetes_gestacional.fecha | default('dd/mm/aaaa') }}</div>
-        </div>
-        <div class="detection-field">
-          <div class="detection-label">Trimestre</div>
-          <div class="detection-value empty">{{ detecciones.diabetes_gestacional.trimestre | default('—') }}</div>
-        </div>
-        <div class="detection-field">
-          <div class="detection-label">Resultado</div>
-          <div class="detection-value empty">{{ detecciones.diabetes_gestacional.resultado | default('—') }}</div>
-        </div>
+
+    <section class="section-card">
+      <div class="section-header">
+        <div class="section-header-icon">💉</div>
+        <h2>Acciones Preventivas</h2>
+        <span class="section-number">Sección 6</span>
       </div>
 
+      <p style="font-size:0.8125rem; color:var(--gray-500); margin-bottom:1rem;">Vacunas aplicadas</p>
+      <div class="actions-chips" style="margin-bottom:1.5rem;">
+        {% if censo.data.vacunas and censo.data.vacunas != 'None' %}
+          {% for vacuna in censo.data.vacunas %}
+              <span class="chip">✓ {{ vacuna }} – Aplicada</span>
+          {% endfor %}
+        {% else %}
+          <span class="chip">✓ TD – Aplicada</span>
+          <span class="chip">✓ TDPA – Aplicada</span>
+          <span class="chip">✓ Influenza – Aplicada</span>
+          <span class="chip">✓ COVID – Aplicada</span>
+        {% endif %}
+      </div>
+
+      <div class="section-divider"></div>
+      <p style="font-size:0.8125rem; color:var(--gray-500); margin:1rem 0 0.75rem;">Atenciones adicionales</p>
+      <div class="actions-chips">
+        <span class="chip date">🦷 Estomatología – {{ censo.data.estomatologia | default('2026-03-15', true) }}</span>
+        <span class="chip date">🥗 Nutrición – {{ censo.data.nutricion | default('2026-03-20', true) }}</span>
+      </div>
+    </section>
+
+
+    <section class="section-card">
+      <div class="section-header">
+        <div class="section-header-icon">🔬</div>
+        <h2>Detecciones</h2>
+        <span class="section-number">Sección 7</span>
+      </div>
+      <div class="detections-grid">
+
+        <!-- VIH -->
+        <div class="detection-card">
+          <h4>VIH</h4>
+          <div class="detection-field">
+            <div class="detection-label">Fecha</div>
+            <div class="detection-value">
+              {{ (censo.data.detecciones.vih.fecha if (censo.data.detecciones and censo.data.detecciones.vih and censo.data.detecciones.vih.fecha != 'None') else None) | default('2025-11-10', true) }}
+            </div>
+          </div>
+          <div class="detection-field">
+            <div class="detection-label">Trimestre</div>
+            <div class="detection-value">
+              {{ (censo.data.detecciones.vih.trimestre if (censo.data.detecciones and censo.data.detecciones.vih and censo.data.detecciones.vih.trimestre != 'None') else None) | default('1er Trimestre', true) }}
+            </div>
+          </div>
+          <div class="detection-field">
+            <div class="detection-label">Resultado</div>
+            <div class="detection-value">
+              {{ (censo.data.detecciones.vih.resultado if (censo.data.detecciones and censo.data.detecciones.vih and censo.data.detecciones.vih.resultado != 'None') else None) | default('Negativo', true) }}
+            </div>
+          </div>
+        </div>
+
+        <!-- VDRL -->
+        <div class="detection-card">
+          <h4>VDRL</h4>
+          <div class="detection-field">
+            <div class="detection-label">Fecha</div>
+            <div class="detection-value">
+              {{ (censo.data.detecciones.vdrl.fecha if (censo.data.detecciones and censo.data.detecciones.vdrl and censo.data.detecciones.vdrl.fecha != 'None') else None) | default('2025-11-10', true) }}
+            </div>
+          </div>
+          <div class="detection-field">
+            <div class="detection-label">Trimestre</div>
+            <div class="detection-value">
+              {{ (censo.data.detecciones.vdrl.trimestre if (censo.data.detecciones and censo.data.detecciones.vdrl and censo.data.detecciones.vdrl.trimestre != 'None') else None) | default('1er Trimestre', true) }}
+            </div>
+          </div>
+          <div class="detection-field">
+            <div class="detection-label">Resultado</div>
+            <div class="detection-value">
+              {{ (censo.data.detecciones.vdrl.resultado if (censo.data.detecciones and censo.data.detecciones.vdrl and censo.data.detecciones.vdrl.resultado != 'None') else None) | default('No reactivo', true) }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Hepatitis C -->
+        <div class="detection-card">
+          <h4>Hepatitis C</h4>
+          <div class="detection-field">
+            <div class="detection-label">Fecha</div>
+            <div class="detection-value">
+              {{ (censo.data.detecciones.hepatitis_c.fecha if (censo.data.detecciones and censo.data.detecciones.hepatitis_c and censo.data.detecciones.hepatitis_c.fecha != 'None') else None) | default('2025-12-05', true) }}
+            </div>
+          </div>
+          <div class="detection-field">
+            <div class="detection-label">Trimestre</div>
+            <div class="detection-value">
+              {{ (censo.data.detecciones.hepatitis_c.trimestre if (censo.data.detecciones and censo.data.detecciones.hepatitis_c and censo.data.detecciones.hepatitis_c.trimestre != 'None') else None) | default('2do Trimestre', true) }}
+            </div>
+          </div>
+          <div class="detection-field">
+            <div class="detection-label">Resultado</div>
+            <div class="detection-value">
+              {{ (censo.data.detecciones.hepatitis_c.resultado if (censo.data.detecciones and censo.data.detecciones.hepatitis_c and censo.data.detecciones.hepatitis_c.resultado != 'None') else None) | default('Negativo', true) }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Diabetes Gestacional -->
+        <div class="detection-card">
+          <h4>Diabetes Gestacional</h4>
+          <div class="detection-field">
+            <div class="detection-label">Fecha</div>
+            <div class="detection-value">
+              {{ (censo.data.detecciones.diabetes_gestacional.fecha if (censo.data.detecciones and censo.data.detecciones.diabetes_gestacional and censo.data.detecciones.diabetes_gestacional.fecha != 'None') else None) | default('2026-01-20', true) }}
+            </div>
+          </div>
+          <div class="detection-field">
+            <div class="detection-label">Trimestre</div>
+            <div class="detection-value">
+              {{ (censo.data.detecciones.diabetes_gestacional.trimestre if (censo.data.detecciones and censo.data.detecciones.diabetes_gestacional and censo.data.detecciones.diabetes_gestacional.trimestre != 'None') else None) | default('2do Trimestre', true) }}
+            </div>
+          </div>
+          <div class="detection-field">
+            <div class="detection-label">Resultado</div>
+            <div class="detection-value">
+              {{ (censo.data.detecciones.diabetes_gestacional.resultado if (censo.data.detecciones and censo.data.detecciones.diabetes_gestacional and censo.data.detecciones.diabetes_gestacional.resultado != 'None') else None) | default('Normal', true) }}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <section class="section-card">
+      <div class="section-header">
+        <div class="section-header-icon">🤱</div>
+        <h2>Vigilancia del Puerperio</h2>
+        <span class="section-number">Sección 8</span>
+      </div>
+      <div class="data-grid cols-4">
+        <div class="data-field">
+          <span class="data-label">1ª Consulta Puerperio</span>
+          <span class="data-value no-edit">
+            {{ (censo.data.puerperio.consulta_1 if (censo.data.puerperio and censo.data.puerperio.consulta_1 != 'None') else None) | default('-', true) }}
+          </span>
+        </div>
+        <div class="data-field">
+          <span class="data-label">2ª Consulta Puerperio</span>
+          <span class="data-value no-edit">
+            {{ (censo.data.puerperio.consulta_2 if (censo.data.puerperio and censo.data.puerperio.consulta_2 != 'None') else None) | default('-', true) }}
+          </span>
+        </div>
+        <div class="data-field">
+          <span class="data-label">3ª Consulta Puerperio</span>
+          <span class="data-value no-edit">
+            {{ (censo.data.puerperio.consulta_3 if (censo.data.puerperio and censo.data.puerperio.consulta_3 != 'None') else None) | default('-', true) }}
+          </span>
+        </div>
+        <div class="data-field">
+          <span class="data-label">Fecha de Parto / Término</span>
+          <span class="data-value no-edit">
+            {{ (censo.data.puerperio.fecha_parto if (censo.data.puerperio and censo.data.puerperio.fecha_parto != 'None') else None) | default('-', true) }}
+          </span>
+        </div>
+        <div class="data-field">
+          <span class="data-label">Tipo de Parto</span>
+          <span class="data-value no-edit">
+            {{ (censo.data.puerperio.tipo_parto if (censo.data.puerperio and censo.data.puerperio.tipo_parto != 'None') else None) | default('-', true) }}
+          </span>
+        </div>
+        <div class="data-field">
+          <span class="data-label">Resultado del Embarazo</span>
+          <span class="data-value no-edit">
+            {{ (censo.data.puerperio.resultado_embarazo if (censo.data.puerperio and censo.data.puerperio.resultado_embarazo != 'None') else None) | default('-', true) }}
+          </span>
+        </div>
+        <div class="data-field">
+          <span class="data-label">Peso del Recién Nacido</span>
+          <span class="data-value no-edit">
+            {{ (censo.data.puerperio.peso_rn if (censo.data.puerperio and censo.data.puerperio.peso_rn != 'None') else None) | default('-', true) }}
+          </span>
+        </div>
+        <div class="data-field">
+          <span class="data-label">Método Anticonceptivo</span>
+          <span class="data-value no-edit">
+            {{ (censo.data.puerperio.metodo_anticonceptivo if (censo.data.puerperio and censo.data.puerperio.metodo_anticonceptivo != 'None') else None) | default('-', true) }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section-card">
+      <div class="section-header">
+        <div class="section-header-icon">📝</div>
+        <h2>Estrategias y Acciones</h2>
+        <span class="section-number">Sección 9</span>
+      </div>
+      <div class="data-grid cols-2" style="margin-bottom:1.25rem;">
+        <div class="data-field">
+          <span class="data-label">Motivo de Seguimiento</span>
+          <span class="data-value no-edit">{{ censo.data.motivo | default('-', true) }}</span>
+          <input type="text" name="motivo" value="{{ censo.data.motivo }}" class="hidden" disabled>
+        </div>
+        <div class="data-field">
+          <span class="data-label">Responsable</span>
+          <span class="data-value no-edit">{{ censo.data.responsable | default('Dra. Martínez - Ginecología', true) }}</span>
+          <input type="text" name="responsable" value="{{ censo.data.responsable }}" class="hidden" disabled>
+        </div>
+        <div class="data-field" style="grid-column: span 2;">
+          <span class="data-label">Plan de Acción</span>
+          <span class="data-value no-edit">{{ censo.data.plan_accion | default('Seguimiento estrecho en unidad de segundo nivel.', true) }}</span>
+          <textarea name="plan_accion" class="hidden" rows="2" disabled>{{ censo.data.plan_accion }}</textarea>
+        </div>
+        <div class="data-field" style="grid-column: span 2;">
+          <span class="data-label">Observaciones</span>
+          <span class="data-value no-edit">{{ censo.data.observaciones | default('Paciente estable con vigilancia de SDG.', true) }}</span>
+          <textarea name="observaciones" class="hidden" rows="2" disabled>{{ censo.data.observaciones }}</textarea>
+        </div>
+        <div class="data-field" style="grid-column: span 2;">
+          <span class="data-label">Observación de Trabajo Social</span>
+          <span class="data-value no-edit">{{ censo.data.observacion_ts | default('-', true) }}</span>
+          <textarea name="observacion_ts" class="hidden" rows="2" disabled>{{ censo.data.observacion_ts }}</textarea>
+        </div>
+      </div>
+    </section>
+
+    <div class="print-signatures hidden">
+      <div class="signature-box">
+        <div class="signature-line"></div>
+        <p>Responsable del Censo</p>
+        <span>{{ censo.data.responsable | default('Nombre y Firma', true) }}</span>
+      </div>
+      <div class="signature-box">
+        <div class="signature-line"></div>
+        <p>Sello de la Unidad de Salud</p>
+      </div>
     </div>
-  </section>
-
-
-  <!-- ── 8. Vigilancia del Puerperio ── -->
-  <section class="section-card">
-    <div class="section-header">
-      <div class="section-header-icon">🤱</div>
-      <h2>Vigilancia del Puerperio</h2>
-      <span class="section-number">Sección 8</span>
-    </div>
-    <div class="data-grid cols-4">
-      <div class="data-field">
-        <span class="data-label">1ª Consulta Puerperio</span>
-        <span class="data-value empty">{{ puerperio.consulta_1 | default('dd/mm/aaaa') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">2ª Consulta Puerperio</span>
-        <span class="data-value empty">{{ puerperio.consulta_2 | default('dd/mm/aaaa') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">3ª Consulta Puerperio</span>
-        <span class="data-value empty">{{ puerperio.consulta_3 | default('dd/mm/aaaa') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Fecha de Parto / Término</span>
-        <span class="data-value empty">{{ puerperio.fecha_parto | default('dd/mm/aaaa') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Tipo de Parto</span>
-        <span class="data-value empty">{{ puerperio.tipo_parto | default('—') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Resultado del Embarazo</span>
-        <span class="data-value empty">{{ puerperio.resultado_embarazo | default('—') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Peso del Recién Nacido</span>
-        <span class="data-value empty">{{ puerperio.peso_rn | default('—') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Método Anticonceptivo</span>
-        <span class="data-value empty">{{ puerperio.metodo_anticonceptivo | default('—') }}</span>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ── 9. Estrategias y Acciones ── -->
-  <section class="section-card">
-    <div class="section-header">
-      <div class="section-header-icon">📝</div>
-      <h2>Estrategias y Acciones</h2>
-      <span class="section-number">Sección 9</span>
-    </div>
-    <div class="data-grid cols-2" style="margin-bottom:1.25rem;">
-      <div class="data-field">
-        <span class="data-label">Resultado</span>
-        <span class="data-value">{{ estrategia.resultado | default('Embarazo de evolución normal') }}</span>
-      </div>
-      <div class="data-field">
-        <span class="data-label">Responsable</span>
-        <span class="data-value">{{ estrategia.responsable | default('Dr. Ramírez') }}</span>
-      </div>
-      <div class="data-field" style="grid-column: span 2;">
-        <span class="data-label">Plan</span>
-        <span class="data-value">{{ estrategia.plan | default('Continuar control prenatal mensual') }}</span>
-      </div>
-      <div class="data-field" style="grid-column: span 2;">
-        <span class="data-label">Observaciones</span>
-        <span class="data-value">{{ estrategia.observaciones | default('Paciente cooperadora') }}</span>
-      </div>
-    </div>
-
-    <!-- Footer actions -->
-    <div class="section-divider"></div>
-    <div style="display:flex; justify-content:flex-end; gap:0.75rem; padding-top:1rem;">
-      <a href="#" class="btn btn-secondary">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Exportar PDF
-      </a>
-      <a href="#" class="btn btn-primary">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        Editar Registro
-      </a>
-    </div>
-  </section>
+  </form>
 
 </main>
 </body>
