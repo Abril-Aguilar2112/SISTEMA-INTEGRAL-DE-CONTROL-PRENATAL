@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEP - Inasistencias</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sigep-style.css') }}">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-user">
+            <div class="user-avatar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <div class="user-info">
+                <h2>SIGEP</h2>
+                <p>Director General</p>
+            </div>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('dashboard.dashboard') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                Dashboard
+            </a></li>
+            <li><a href="{{ url_for('pacientes.pacientes') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Pacientes
+            </a></li>
+            <li><a href="{{ url_for('citas.citas') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                Citas
+            </a></li>
+            <li><a href="{{ url_for('inasistencias.get_inasistencias') }}" class="active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                Inasistencias
+            </a></li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <a href="/auth/logout" style="display: flex; align-items: center; gap: 0.75rem; color: var(--gray-600); text-decoration: none; font-size: 0.875rem; padding: 0.5rem 1rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Cerrar Sesión
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="content-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1>Inasistencias</h1>
+                <p>Seguimiento de pacientes que no asistieron a sus citas</p>
+            </div>
+            <a href="{{ url_for('citas.citas') }}" class="btn btn-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Volver a Citas
+            </a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category if category in ['success', 'info', 'warning'] else 'info' }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="alert alert-warning mb-6" role="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            <div>
+                <strong>9 pacientes</strong> requieren seguimiento por inasistencia
+                <div style="font-size: 0.875rem; font-weight: 500; opacity: 0.85;">Las pacientes enviaron el motivo de inasistencia desde la aplicación móvil</div>
+            </div>
+        </div>
+
+        <div class="section-card mb-6">
+            <form method="GET" action="{{ url_for('inasistencias.get_inasistencias') }}">
+                <div style="display: grid; grid-template-columns: 1fr 260px 220px auto; gap: 1rem; align-items: end;">
+                    <div class="form-group" style="margin: 0;">
+                        <label class="form-label">Buscar Paciente</label>
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-input" placeholder="Nombre o No. Expediente...">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon" style="position: absolute; left: 1rem; color: var(--gray-400);"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                        <label class="form-label">Estatus</label>
+                        <select name="estatus" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="reagendada">Se le agendará nueva cita</option>
+                            <option value="baja">Dada de baja</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                        <label class="form-label">Fecha</label>
+                        <input type="date" name="fecha" class="form-input">
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Filtrar</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Inasistencias Cards -->
+        {% if inasistencias["data"] %}
+            {% for inasistencia in inasistencias["data"] %}
+        <div class="section-card mb-4">
+            <div style="border-left: 4px solid var(--red); padding-left: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <div>
+                        <h3 style="color: var(--gray-900); margin-bottom: 0.5rem;">{{ inasistencia["nombre_paciente"] }}</h3>
+                        <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 0.25rem;">
+                            <strong>Fecha de cita:</strong> {{ inasistencia["fecha_cita"] }} | <strong>Hora:</strong> {{ inasistencia["hora_cita"] }} AM
+                        </p>
+                        <p style="color: var(--gray-600); font-size: 0.875rem;">
+                            <strong>No. Expediente:</strong> {{ inasistencia["id_paciente"] }} | <strong>SDG:</strong> {{ inasistencia["sdg"] }} semanas
+                        </p>
+                    </div>
+                    <span class="badge badge-danger">Inasistencia</span>
+                </div>
+
+                <div style="background: var(--gray-50); padding: 1rem; border-radius: 0.75rem; margin-bottom: 1rem;">
+                    <p style="font-size: 0.875rem; color: var(--gray-700); margin-bottom: 0.5rem;">
+                        <strong>Motivo enviado desde app móvil:</strong>
+                    </p>
+                    <p style="color: var(--gray-900);">
+                        {{ inasistencia["motivo"] or "No se ha enviado el motivo de inasistencia" }}
+                    </p>
+                </div>
+                <form method="POST" action="{{ url_for('inasistencias.actualizar_inasistencia', id_inasistencia=inasistencia['id_inasistencia']) }}">
+                    <div style="margin-bottom: 1rem;">
+                        <label class="form-label">Observaciones (Trabajo Social)</label>
+                        <select name="observacion" class="form-select" style="margin-bottom: 0.5rem;">
+                            {%  if inasistencia["observacion_inasistencia"] %}
+                                <option value="{{ inasistencia["observacion_inasistencia"] }}">{{ inasistencia["observacion_inasistencia"] }}</option>  
+                                {% for tipo_observacion in ["Se le agendará nueva cita", "Se canalizará a trabajo social", "Se dará de baja temporalmente"] %}
+                                    {% if inasistencia["observacion_asistencia"] != tipo_observacion %}
+                                        <option value="{{ tipo_observacion }}">{{ tipo_observacion }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <option value="" selected>Seleccionar</option>
+                                <option value="Se le agendará nueva cita">Se le agendará nueva cita</option>
+                                <option value="Se canalizará a trabajo social">Se canalizará a trabajo social</option>
+                                <option value="Se dará de baja temporalmente">Se dará de baja temporalmente</option>
+                            {% endif %}
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label class="form-label">Mensaje de Seguimiento</label>
+                        {% if inasistencia["mensaje_seguimiento"] %}
+                            <textarea class="form-textarea" name="mensaje_seguimiento" rows="3" placeholder="Escriba un mensaje para dar seguimiento a la paciente...">{{ inasistencia["mensaje_seguimiento"] or "No se ha enviado el mensaje de seguimiento" }}</textarea>
+                        {% else %}
+                            <textarea class="form-textarea" name="mensaje_seguimiento" rows="3" placeholder="Escriba un mensaje para dar seguimiento a la paciente..."></textarea>
+                        {% endif %}
+                    </div>
+
+
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                            <button class="btn btn-primary" type="submit">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                                Guardar
+                            </button>
+                        </div>
+                    </form>
+            </div>
+        </div>
+
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-warning" role="alert">
+                <strong>Atención:</strong> No hay inasistencias pendientes de seguimiento.
+            </div>
+        {% endif %}
+
+        <div style="margin-top: 1.5rem;">
+            <p style="color: var(--gray-600);">Mostrando 3 de 9 inasistencias pendientes de seguimiento</p>
+        </div>
+    </div>
+</body>
+</html>

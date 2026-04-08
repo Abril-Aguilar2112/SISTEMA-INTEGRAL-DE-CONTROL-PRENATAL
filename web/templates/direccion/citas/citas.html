@@ -87,10 +87,6 @@
                 Citas
             </a></li>
             <li><a href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                Expedientes
-            </a></li>
-            <li><a href="#">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
                 Censo
             </a></li>
@@ -126,7 +122,7 @@
 
         <!-- Filters -->
         <div class="section-card mb-6">
-            <form method="GET">
+            <form method="GET" action="{{ url_for('citas.citas') }}">
                 <div style="display: grid; grid-template-columns: 1fr auto auto auto; gap: 1rem; align-items: end;">
                     <div class="form-group" style="margin: 0;">
                         <label class="form-label">Buscar Paciente</label>
@@ -172,7 +168,7 @@
                     <span class="stat-badge positive">Hoy</span>
                 </div>
                 <span class="stat-label">Citas para Hoy</span>
-                <span class="stat-value">12</span>
+                <span class="stat-value">{{ stats.data["citas_hoy"] }}</span>
             </div>
 
             <div class="stat-card">
@@ -183,7 +179,7 @@
                     <span class="stat-badge positive">+8%</span>
                 </div>
                 <span class="stat-label">Esta Semana</span>
-                <span class="stat-value">48</span>
+                <span class="stat-value">{{ stats.data["citas_semana"] }}</span>
             </div>
 
             <div class="stat-card">
@@ -194,7 +190,7 @@
                     <span class="stat-badge warning">Pendientes</span>
                 </div>
                 <span class="stat-label">Por Confirmar</span>
-                <span class="stat-value">15</span>
+                <span class="stat-value">{{ stats.data["pendientes"] }}</span>
             </div>
 
             <div class="stat-card">
@@ -205,7 +201,7 @@
                     <span class="stat-badge negative">Crítico</span>
                 </div>
                 <span class="stat-label">Inasistencias (Mes)</span>
-                <span class="stat-value">9</span>
+                <span class="stat-value">{{ stats.data["inasistencias_mes"] }}</span>
             </div>
         </div>
 
@@ -302,9 +298,8 @@
         </div>
 
         <div style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; background-color: var(--white); padding: 1rem; border-radius: 0.75rem; border: 1px solid var(--gray-200);">
-            <p style="color: var(--gray-600); font-size: 0.875rem;">Mostrando 6 citas del 7 al 9 de abril</p>
-            <div style="display: flex; gap: 0.75rem;">
-                <a href="inasistencias.html" class="btn btn-secondary" style="color: var(--red);">
+            <p style="color: var(--gray-600); font-size: 0.875rem;">{% if citas["count"] %}Mostrando {{ citas["count"] }} {% if citas["count"] <= 1 %}cita{% else %}citas{% endif %}{% else %}No hay citas{% endif %}</p>
+                <a href="/gestion/inasistencias" class="btn btn-secondary" style="color: var(--red);">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                     Ver Inasistencias
                 </a>

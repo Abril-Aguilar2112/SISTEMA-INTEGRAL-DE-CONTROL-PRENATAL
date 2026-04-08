@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from services.citas import get_citas, get_cita_by_id, update_cita, upsert_inasistencia,set_estado_cita
+from services.citas import get_citas, get_cita_by_id, update_cita, upsert_inasistencia,set_estado_cita, get_stats_citas
 from services.medico import get_medicos
 from models.cita import CitaUpdate, CitaReagendar
 from pydantic import ValidationError
@@ -8,8 +8,14 @@ citas_bp = Blueprint('citas', __name__)
 
 @citas_bp.route('/citas')
 def citas():
-    citas = get_citas()
-    return render_template('direccion/citas/citas.html', citas=citas)
+    search = request.args.get("search")
+    fecha = request.args.get("fecha")
+    estado = request.args.get("estado")
+
+    citas = get_citas(search, fecha, estado)
+
+    stats = get_stats_citas()
+    return render_template('direccion/citas/citas.html', citas=citas, stats=stats)  
 
 @citas_bp.route('/cita_editar/<int:id_cita>', methods=['GET', 'POST'])
 def cita_editar(id_cita):

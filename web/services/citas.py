@@ -1,14 +1,51 @@
 from utils.supabase_client import supabase
 
-def get_citas():
+def get_stats_citas():
     try:
-        response = supabase.from_("vista_citas").select().execute()
+        response = supabase.from_("vista_dashboard_citas").select().execute()
 
+        if response.data:
+            return {
+                "data": response.data[0],
+                "message": "success",
+                "error": None
+            }
+
+    except Exception as e:
         return {
-            "data": response.data,
-            "message": "success",
-            "error": None
+            "data": {},
+            "message": "error",
+            "error": str(e)
         }
+def get_citas(search='', fecha='', estado=''):
+    try:
+        query = supabase.from_("vista_citas").select("*", count="exact")
+
+        if search:
+            if search.isdigit():
+                query = query.or_(
+                    f"id_paciente.eq.{search},paciente.ilike.%{search}%"
+                )
+            else:
+                query = query.ilike("paciente", f"%{search}%")
+
+        if fecha:
+            query = query.eq("fecha", fecha)
+
+        if estado:
+            query = query.eq("estado", estado)
+
+        
+        response = query.execute()
+
+
+        if response.data:
+            return {
+                "data": response.data, 
+                "count": response.count,
+                "message": "success",
+                "error": None
+            }
 
     except Exception as e:
         return {

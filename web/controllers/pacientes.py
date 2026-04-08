@@ -28,6 +28,10 @@ def pacientes():
 
 @pacientes_bp.route("/paciente_registro", methods=["GET", "POST"])
 def paciente_registro():
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    if session['rol'] not in ['director_general', 'enfermera']	:
+        return redirect(url_for('auth.login'))
     if request.method == "GET":
         return render_template("direccion/pacientes/paciente_registro.html")
  
