@@ -52,7 +52,9 @@ def paciente_registro():
 
 @pacientes_bp.route("/paciente_editar/<int:id_paciente>", methods=["GET", "POST"])
 def paciente_editar(id_paciente):
-
+    if 'user_id' not in session or session.get('rol') != 'director_general':
+        return redirect(url_for('auth.login'))
+        
     if request.method == "GET":
         paciente = get_paciente_by_id(id_paciente)["data"]
 
@@ -87,7 +89,9 @@ def paciente_editar(id_paciente):
 
 @pacientes_bp.route("/paciente_detalle/<int:id_paciente>", methods=["GET"])
 def paciente_detalle(id_paciente):
+    if 'user_id' not in session or session.get('rol') != 'director_general':
+        return redirect(url_for('auth.login'))
+        
     paciente = get_paciente_by_id(id_paciente)["data"]
-    print(paciente)
     return render_template('direccion/pacientes/paciente_detalle.html', paciente=paciente)
 

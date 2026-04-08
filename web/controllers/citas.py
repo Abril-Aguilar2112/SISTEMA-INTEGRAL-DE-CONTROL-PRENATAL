@@ -1,13 +1,17 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
-from services.citas import get_citas, get_cita_by_id, update_cita, upsert_inasistencia,set_estado_cita, get_stats_citas
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from services.citas import get_citas, get_cita_by_id, update_cita, upsert_inasistencia,set_estado_cita, get_stats_citas, crear_cita
 from services.medico import get_medicos
-from models.cita import CitaUpdate, CitaReagendar
+from services.paciente_service import get_pacientes
+from models.cita import CitaUpdate, CitaReagendar, CitaCreate
 from pydantic import ValidationError
 
 citas_bp = Blueprint('citas', __name__)
 
 @citas_bp.route('/citas')
 def citas():
+    if 'user_id' not in session or session.get('rol') != 'director_general':
+        return redirect(url_for('auth.login'))
+        
     search = request.args.get("search")
     fecha = request.args.get("fecha")
     estado = request.args.get("estado")
@@ -17,8 +21,44 @@ def citas():
     stats = get_stats_citas()
     return render_template('direccion/citas/citas.html', citas=citas, stats=stats)  
 
+@citas_bp.route('/cita_crear', methods=['GET', 'POST'])
+def cita_crear():
+    if 'user_id' not in session or session.get('rol') != 'director_general':
+        return redirect(url_for('auth.login'))
+
+    if request.method == 'POST':
+        try:
+            form_data = request.form.to_dict()
+            
+            # Soporte para formularios cacheados que aún usen 'tipo_consulta'
+            if 'tipo_consulta' in form_data and 'area' not in form_data:
+                form_data['area'] = form_data.pop('tipo_consulta')
+                
+            # Validar y formatear con Pydantic
+            cita_valida = CitaCreate(**form_data)
+            
+            result = crear_cita(cita_valida.model_dump(mode="json"))
+            
+            if result["message"] == "success":
+                flash("Cita programada exitosamente", "success")
+                return redirect(url_for("citas.citas"))
+            else:
+                flash(f"Error al crear cita: {result['error']}", "error")
+        except ValidationError as e:
+            flash(f"Error de validación: {str(e)}", "error")
+        except Exception as e:
+            flash(f"Ocurrió un error inesperado: {str(e)}", "error")
+
+    medicos = get_medicos()
+    pacientes = get_pacientes(per_page=1000)
+        
+    return render_template('direccion/citas/cita_crear.html', medicos=medicos, pacientes=pacientes)
+
 @citas_bp.route('/cita_editar/<int:id_cita>', methods=['GET', 'POST'])
 def cita_editar(id_cita):
+    if 'user_id' not in session or session.get('rol') != 'director_general':
+        return redirect(url_for('auth.login'))
+        
     if request.method == 'GET':
         cita = get_cita_by_id(id_cita)
         medicos = get_medicos()
@@ -48,6 +88,8 @@ def cita_editar(id_cita):
 
 @citas_bp.route('/reagendar/<int:id_cita>', methods=['POST'])
 def reagendar_cita(id_cita):
+    if 'user_id' not in session or session.get('rol') != 'director_general':
+        return jsonify({"status": "error", "message": "No tiene permisos para realizar esta acción"}), 403
     try:
         form = request.form.to_dict()
         cita_formateada = CitaReagendar(**form).model_dump(mode="json", exclude_none=True)

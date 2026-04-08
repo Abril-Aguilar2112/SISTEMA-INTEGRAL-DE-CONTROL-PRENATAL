@@ -15,8 +15,9 @@ def get_inasistencias():
     search = request.args.get('search')
     estado = request.args.get('estatus')
     fecha = request.args.get('fecha')
+    justificada = request.args.get('justificada')
 
-    inasistencias = get_inasistencias_service(search, estado, fecha)
+    inasistencias = get_inasistencias_service(search, estado, fecha, justificada)
 
     if inasistencias.get("error"):
         return render_template('direccion/inasistencias.html', inasistencias=inasistencias)
@@ -30,7 +31,7 @@ def actualizar_inasistencia(id_inasistencia):
         return redirect(url_for('auth.login'))
 
     form = {}
-    form['observacion_ts'] = request.form.get('observacion')
+    form['observacion_ts'] = request.form.get('observacion_ts')
     form['mensaje_seguimiento'] = request.form.get('mensaje_seguimiento')
 
     data = InasistenciaContestar(**form).model_dump(mode="json")
