@@ -94,27 +94,27 @@
                         </div>
                         <div class="data-field">
                             <p class="data-label">CURP</p>
-                            <p class="data-value">{{ paciente.curp or '—' }}</p>
+                            <p class="data-value">{{ paciente.curp | default('-', true) }}</p>
                         </div>
                         <div class="data-field">
                             <p class="data-label">Edad</p>
-                            <p class="data-value">{{ paciente.edad }} años</p>
+                            <p class="data-value">{{ paciente.edad | default('-', true) }}{% if paciente.edad and paciente.edad != 'None' %} años{% endif %}</p>
                         </div>
                         <div class="data-field">
                             <p class="data-label">Teléfono</p>
-                            <p class="data-value">{{ paciente.telefono or '—' }}</p>
+                            <p class="data-value">{{ paciente.telefono | default('-', true) }}</p>
                         </div>
                         <div class="data-field">
                             <p class="data-label">Lengua Indígena</p>
-                            <p class="data-value">{{ paciente.lengua_indigena or '—' }}</p>
+                            <p class="data-value">{{ paciente.lengua_indigena | default('-', true) }}</p>
                         </div>
                         <div class="data-field">
                             <p class="data-label">No. de Expediente</p>
-                            <p class="data-value">#{{ paciente.id_paciente }}</p>
+                            <p class="data-value">#{{ paciente.id_paciente | default('-', true) }}</p>
                         </div>
                         <div class="data-field full-width">
                             <p class="data-label">Colonia</p>
-                            <p class="data-value">{{ paciente.colonia or '—' }}</p>
+                            <p class="data-value">{{ paciente.colonia | default('-', true) }}</p>
                         </div>
                     </div>
                 </div>
@@ -128,27 +128,27 @@
                     <div class="data-grid">
                         <div class="data-field" style="background-color: var(--purple-bg); padding: 1rem; border-radius: 0.75rem; text-align: center;">
                             <p class="data-label">Semanas de Gestación</p>
-                            <p style="font-size: 1.5rem; font-weight: 700; color: var(--purple-primary);">{{ paciente.semanas_gestacion }} SDG</p>
+                            <p style="font-size: 1.5rem; font-weight: 700; color: var(--purple-primary);">{{ paciente.semanas_gestacion | default('-', true) }}{% if paciente.semanas_gestacion and paciente.semanas_gestacion != 'None' %} SDG{% endif %}</p>
                         </div>
                         <div class="data-field">
                             <p class="data-label">FUR</p>
-                            <p class="data-value">{{ paciente.fur or '—' }}</p>
+                            <p class="data-value">{{ paciente.fur | default('-', true) }}</p>
                         </div>
                         <div class="data-field">
                             <p class="data-label">FPP</p>
-                            <p class="data-value">{{ paciente.fpp or '—' }}</p>
+                            <p class="data-value">{{ paciente.fpp | default('-', true) }}</p>
                         </div>
                         <div class="data-field">
                             <p class="data-label">Fecha Ingreso CPN</p>
-                            <p class="data-value">{{ paciente.fecha_ingreso_cpn or '—' }}</p>
+                            <p class="data-value">{{ paciente.fecha_ingreso_cpn | default('-', true) }}</p>
                         </div>
                         <div class="data-field">
                             <p class="data-label">Última Atención</p>
-                            <p class="data-value">{{ paciente.fecha_ultima_atencion or '—' }}</p>
+                            <p class="data-value">{{ paciente.fecha_ultima_atencion | default('-', true) }}</p>
                         </div>
                         <div class="data-field">
                             <p class="data-label">Consultas Otorgadas</p>
-                            <p class="data-value">{{ paciente.consultas_otorgadas or '0' }}</p>
+                            <p class="data-value">{{ paciente.consultas_otorgadas | default('0', true) }}</p>
                         </div>
                     </div>
                     
@@ -219,11 +219,11 @@
                 <div class="section-card text-center" style="background: linear-gradient(135deg, var(--white), var(--gray-50));">
                     <p class="data-label mb-4">NIVEL DE RIESGO ACTUAL</p>
                     {% if paciente.nivel_riesgo == 'alto' %}
-                        <span class="badge badge-danger" style="font-size: 1.25rem; padding: 0.75rem 2rem; width: 100%; justify-content: center; text-transform: uppercase;">Alto Riesgo</span>
+                        <div class="status-text text-red" style="font-size: 1.5rem; text-transform: uppercase;">Alto Riesgo</div>
                     {% elif paciente.nivel_riesgo == 'medio' %}
-                        <span class="badge badge-warning" style="font-size: 1.25rem; padding: 0.75rem 2rem; width: 100%; justify-content: center; text-transform: uppercase;">Riesgo Medio</span>
+                        <div class="status-text text-yellow" style="font-size: 1.5rem; text-transform: uppercase;">Riesgo Medio</div>
                     {% else %}
-                        <span class="badge badge-success" style="font-size: 1.25rem; padding: 0.75rem 2rem; width: 100%; justify-content: center; text-transform: uppercase;">Bajo Riesgo</span>
+                        <div class="status-text text-green" style="font-size: 1.5rem; text-transform: uppercase;">Bajo Riesgo</div>
                     {% endif %}
                     <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 1rem;">*Calculado automáticamente según criterios clínicos</p>
                 </div>
@@ -237,19 +237,37 @@
                     <div class="flex flex-col gap-4">
                         <div>
                             <p class="data-label">Estado General</p>
-                            <p class="data-value">{{ paciente.estado_salud or '—' }}</p>
+                            <p class="data-value">
+                                <span class="status-text 
+                                    {% if paciente.estado_salud|lower == 'crítico' or paciente.estado_salud|lower == 'grave' %}text-red
+                                    {% elif paciente.estado_salud|lower == 'delicado' %}text-yellow
+                                    {% else %}text-green
+                                    {% endif %}
+                                ">
+                                    {{ paciente.estado_salud | default('-') }}
+                                </span>
+                            </p>
                         </div>
                         <div>
                             <p class="data-label">Riesgo Obstétrico</p>
-                            <p class="data-value" style="text-transform: capitalize;">{{ paciente.riesgo_obstetrico or '—' }}</p>
+                            <p class="data-value">
+                                <span class="status-text 
+                                    {% if paciente.riesgo_obstetrico|lower == 'alto' %}text-red
+                                    {% elif paciente.riesgo_obstetrico|lower == 'medio' %}text-yellow
+                                    {% else %}text-green
+                                    {% endif %}
+                                " style="text-transform: capitalize;">
+                                    {{ paciente.riesgo_obstetrico | default('-') }}
+                                </span>
+                            </p>
                         </div>
                         <div>
                             <p class="data-label">Riesgo Social</p>
-                            <p class="data-value">{{ paciente.riesgo_social or '—' }}</p>
+                            <p class="data-value">{{ paciente.riesgo_social | default('-') | capitalize }}</p>
                         </div>
                         <div>
                             <p class="data-label">Factores de Riesgo</p>
-                            <p class="data-value">{{ paciente.factores_riesgo or '—' }}</p>
+                            <p class="data-value">{{ paciente.factores_riesgo | default('-') }}</p>
                         </div>
                     </div>
                 </div>
@@ -263,23 +281,23 @@
                     <div class="flex flex-col gap-4">
                         <div>
                             <p class="data-label">Región</p>
-                            <p class="data-value" style="font-size: 0.875rem;">{{ paciente.region or '—' }}</p>
+                            <p class="data-value" style="font-size: 0.875rem;">{{ paciente.region | default('-', true) }}</p>
                         </div>
                         <div>
                             <p class="data-label">Municipio</p>
-                            <p class="data-value" style="font-size: 0.875rem;">{{ paciente.municipio or '—' }}</p>
+                            <p class="data-value" style="font-size: 0.875rem;">{{ paciente.municipio | default('-', true) }}</p>
                         </div>
                         <div>
                             <p class="data-label">Unidad Médica</p>
-                            <p class="data-value" style="font-size: 0.875rem;">{{ paciente.nombre_unidad or '—' }}</p>
+                            <p class="data-value" style="font-size: 0.875rem;">{{ paciente.nombre_unidad | default('-', true) }}</p>
                         </div>
                         <div>
                             <p class="data-label">CLUES</p>
-                            <p class="data-value" style="font-size: 0.875rem;">{{ paciente.clues_imb or '—' }}</p>
+                            <p class="data-value" style="font-size: 0.875rem;">{{ paciente.clues_imb | default('-', true) }}</p>
                         </div>
                         <div>
                             <p class="data-label">Zona de Servicios</p>
-                            <p class="data-value" style="font-size: 0.875rem;">{{ paciente.zona_servicios or '—' }}</p>
+                            <p class="data-value" style="font-size: 0.875rem;">{{ paciente.zona_servicios | default('-', true) }}</p>
                         </div>
                     </div>
                 </div>
@@ -293,15 +311,15 @@
                     <div class="data-grid cols-2">
                         <div>
                             <p class="data-label">Mes</p>
-                            <p class="data-value" style="font-size: 0.875rem;">{{ paciente.mes_reporte or '—' }}</p>
+                            <p class="data-value" style="font-size: 0.875rem;">{{ paciente.mes_reporte | default('-', true) }}</p>
                         </div>
                         <div>
                             <p class="data-label">Semana Epi.</p>
-                            <p class="data-value" style="font-size: 0.875rem;">{{ paciente.semana_epidemiologica or '—' }}</p>
+                            <p class="data-value" style="font-size: 0.875rem;">{{ paciente.semana_epidemiologica | default('-', true) }}</p>
                         </div>
                         <div class="full-width">
                             <p class="data-label">Fecha de Reporte</p>
-                            <p class="data-value" style="font-size: 0.875rem;">{{ paciente.fecha_reporte or '—' }}</p>
+                            <p class="data-value" style="font-size: 0.875rem;">{{ paciente.fecha_reporte | default('-', true) }}</p>
                         </div>
                     </div>
                 </div>

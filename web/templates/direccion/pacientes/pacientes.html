@@ -140,10 +140,19 @@
                 {% if pacientes.data %}
                     {% for paciente in pacientes.data %}
                         <tr>
-                            <td><strong>{{ paciente.id_paciente }}</strong></td>
-                            <td>{{ paciente.nombre }}</td>
-                            <td>{{ paciente.edad }}</td>
-                            <td><span class="badge badge-info">{{ paciente.semanas_gestacion }} SDG</span></td>
+                            <td><strong>{{ paciente.id_paciente | default('-', true) }}</strong></td>
+                            <td>{{ paciente.nombre | default('-', true) }}</td>
+                            <td>{{ paciente.edad | default('-', true) }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if paciente.nivel_riesgo == 'alto' %}badge-danger
+                                    {% elif paciente.nivel_riesgo == 'medio' %}badge-warning
+                                    {% else %}badge-info
+                                    {% endif %}
+                                ">
+                                    {{ paciente.semanas_gestacion | default('-', true) }} SDG
+                                </span>
+                            </td>
 
                             <td>
                             <span class="badge 
@@ -152,17 +161,23 @@
                                 {% else %}badge-success
                                 {% endif %}
                             ">
-                                {{ paciente.nivel_riesgo }}
+                                {{ paciente.nivel_riesgo | default('-', true) }}
                             </span>
                             </td>
 
-                            <td>{{ paciente.fpp or '—' }}</td>
-                            <td>{{ paciente.ultima_consulta or 'Sin registro' }}</td>
+                            <td>{{ paciente.fpp | default('-', true) }}</td>
+                            <td>{{ paciente.ultima_consulta | default('Sin registro', true) }}</td>
                             <td>
                                 <div class="flex gap-4">
-                                    <a href="{{ url_for('pacientes.paciente_detalle', id_paciente=paciente.id_paciente) }}"	 class="btn btn-secondary btn-icon" title="Ver Detalle">👁️</a>
-                                    <a href="{{ url_for('pacientes.paciente_editar', id_paciente=paciente.id_paciente) }}"	 class="btn btn-secondary btn-icon" title="Editar">✏️</a>
-                                    <a href="cita_crear.html" class="btn btn-primary btn-icon" title="Agendar Cita">📅</a>
+                                    <a href="{{ url_for('pacientes.paciente_detalle', id_paciente=paciente.id_paciente) }}" class="btn btn-secondary btn-icon" title="Ver Detalle">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                    </a>
+                                    <a href="{{ url_for('pacientes.paciente_editar', id_paciente=paciente.id_paciente) }}" class="btn btn-secondary btn-icon" title="Editar">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                    </a>
+                                    <a href="#" class="btn btn-primary btn-icon" title="Agendar Cita">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                    </a>
                                 </div>
                             </td>
                         </tr>

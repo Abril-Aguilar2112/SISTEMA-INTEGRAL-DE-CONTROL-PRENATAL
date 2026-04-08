@@ -92,7 +92,7 @@
                         <label class="form-label">Mes de Reporte</label>
                         <select name="mes_reporte" class="form-select">
                             {% for mes in ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'] %}
-                                <option value="{{ mes }}" {{ 'selected' if paciente.mes_reporte == mes }}>{{ mes }}</option>
+                                <option value="{{ mes }}" {{ 'selected' if paciente.mes_reporte == mes else '' }}>{{ mes }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -136,8 +136,8 @@
                     <div class="form-group">
                         <label class="form-label">Tipo de Localidad</label>
                         <select name="tipo_localidad" class="form-select">
-                            <option value="Urbana" {{ 'selected' if paciente.tipo_localidad == 'Urbana' }}>Urbana</option>
-                            <option value="Rural" {{ 'selected' if paciente.tipo_localidad == 'Rural' }}>Rural</option>
+                            <option value="Urbana" {{ 'selected' if paciente.tipo_localidad == 'Urbana' else '' }}>Urbana</option>
+                            <option value="Rural" {{ 'selected' if paciente.tipo_localidad == 'Rural' else '' }}>Rural</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -246,9 +246,9 @@
                     <div class="form-group">
                         <label class="form-label">Riesgo Obstétrico</label>
                         <select name="riesgo_obstetrico" class="form-select">
-                            <option value="bajo" {{ 'selected' if paciente.riesgo_obstetrico == 'bajo' }}>Bajo</option>
-                            <option value="medio" {{ 'selected' if paciente.riesgo_obstetrico == 'medio' }}>Medio</option>
-                            <option value="alto" {{ 'selected' if paciente.riesgo_obstetrico == 'alto' }}>Alto</option>
+                            <option value="bajo" {{ 'selected' if paciente.riesgo_obstetrico == 'bajo' else '' }}>Bajo</option>
+                            <option value="medio" {{ 'selected' if paciente.riesgo_obstetrico == 'medio' else '' }}>Medio</option>
+                            <option value="alto" {{ 'selected' if paciente.riesgo_obstetrico == 'alto' else '' }}>Alto</option>
                         </select>
                     </div>
                     <div class="form-group">
