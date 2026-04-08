@@ -33,3 +33,8 @@ class CitaUpdate(BaseModel):
             except:
                 return v
         return v
+
+class CitaReagendar(BaseModel):
+    fecha: date
+    hora: str
+   
