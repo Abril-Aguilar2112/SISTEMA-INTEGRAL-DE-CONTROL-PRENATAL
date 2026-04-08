@@ -17,7 +17,7 @@ def crear_inasistencia(data: dict):
             "error": str(e)
         }
 
-def get_inasistencias(search='', estatus='', fecha=''):
+def get_inasistencias(search='', estatus='', fecha='', justificada=''):
     try:
         query = supabase.from_("vista_inasistencias_detalle").select("*", count="exact")
 
@@ -28,7 +28,13 @@ def get_inasistencias(search='', estatus='', fecha=''):
                 query = query.ilike("nombre_paciente", f"%{search}%") 
 
         if estatus:
-            query = query.eq("estatus", estatus)
+            if estatus == 'pendiente':
+                query = query.is_("estatus", "null")
+            else:
+                query = query.eq("estatus", estatus)
+
+        if justificada:
+            query = query.eq("justificada", justificada == 'true')
 
         if fecha:
             query = query.eq("fecha", fecha)
