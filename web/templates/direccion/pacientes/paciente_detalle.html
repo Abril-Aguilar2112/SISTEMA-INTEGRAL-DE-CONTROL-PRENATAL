@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEP - Detalle de Paciente</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sigep-style.css') }}">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-user">
+            <div class="user-avatar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <div class="user-info">
+                <h2>SIGEP</h2>
+                <p>Director General</p>
+            </div>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('dashboard.dashboard') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                Dashboard
+            </a></li>
+            <li><a href="{{ url_for('pacientes.pacientes') }}" class="active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Pacientes
+            </a></li>
+            <li><a href="{{ url_for('citas.citas') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                Citas
+            </a></li>
+            <li><a href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Expedientes
+            </a></li>
+            <li><a href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                Censo
+            </a></li>
+            <li><a href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                Reportes
+            </a></li>
+            <li><a href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Usuarios
+            </a></li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <a href="/auth/logout" style="display: flex; align-items: center; gap: 0.75rem; color: var(--gray-600); text-decoration: none; font-size: 0.875rem; padding: 0.5rem 1rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Cerrar Sesión
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1>Expediente de Paciente</h1>
+                <p>Consulta detallada de: <strong>{{ paciente.nombre }}</strong></p>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <a href="{{ url_for('pacientes.paciente_editar', id_paciente=paciente.id_paciente) }}" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    Editar Información
+                </a>
+                <a href="{{ url_for('pacientes.pacientes') }}" class="btn btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    Volver al Listado
+                </a>
+            </div>
+        </div>
+
+        <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr; margin-bottom: 2rem;">
+            <!-- Columna Izquierda: Información Clínica -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                
+                <!-- Sección: Datos Personales -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <h2>Datos Personales</h2>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                        <div>
+                            <p class="stat-label">Nombre Completo</p>
+                            <p style="font-weight: 600;">{{ paciente.nombre }}</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">CURP</p>
+                            <p style="font-weight: 600;">{{ paciente.curp or '—' }}</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">Edad</p>
+                            <p style="font-weight: 600;">{{ paciente.edad }} años</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">Teléfono</p>
+                            <p style="font-weight: 600;">{{ paciente.telefono or '—' }}</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">Lengua Indígena</p>
+                            <p style="font-weight: 600;">{{ paciente.lengua_indigena or '—' }}</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">No. de Expediente</p>
+                            <p style="font-weight: 600;">#{{ paciente.id_paciente }}</p>
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <p class="stat-label">Colonia</p>
+                            <p style="font-weight: 600;">{{ paciente.colonia or '—' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Embarazo Actual -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        <h2>Embarazo Actual y Control Prenatal</h2>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                        <div style="background-color: var(--purple-bg); padding: 1rem; border-radius: 0.75rem; text-align: center;">
+                            <p class="stat-label">Semanas de Gestación</p>
+                            <p style="font-size: 1.5rem; font-weight: 700; color: var(--purple-primary);">{{ paciente.semanas_gestacion }} SDG</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">FUR</p>
+                            <p style="font-weight: 600;">{{ paciente.fur or '—' }}</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">FPP</p>
+                            <p style="font-weight: 600;">{{ paciente.fpp or '—' }}</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">Fecha Ingreso CPN</p>
+                            <p style="font-weight: 600;">{{ paciente.fecha_ingreso_cpn or '—' }}</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">Última Atención</p>
+                            <p style="font-weight: 600;">{{ paciente.fecha_ultima_atencion or '—' }}</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">Consultas Otorgadas</p>
+                            <p style="font-weight: 600;">{{ paciente.consultas_otorgadas or '0' }}</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <div class="progress-header">
+                            <span class="progress-label">Progreso del Control Prenatal</span>
+                            <span class="progress-value">{{ ((paciente.consultas_otorgadas or 0) / 8 * 100)|round|int }}%</span>
+                        </div>
+                        <div class="progress-bar-bg" style="height: 10px;">
+                            <div class="progress-bar-fill" style="width: {{ ((paciente.consultas_otorgadas or 0) / 8 * 100)|round|int }}%; background-color: var(--purple-primary);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Antecedentes Ginecoobstétricos -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        <h2>Antecedentes Ginecoobstétricos</h2>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                        <div style="text-align: center; border: 1px solid var(--gray-200); padding: 1rem; border-radius: 0.75rem;">
+                            <p class="stat-label">Gestas</p>
+                            <p style="font-size: 1.25rem; font-weight: 700;">{{ paciente.gestas or '0' }}</p>
+                        </div>
+                        <div style="text-align: center; border: 1px solid var(--gray-200); padding: 1rem; border-radius: 0.75rem;">
+                            <p class="stat-label">Partos</p>
+                            <p style="font-size: 1.25rem; font-weight: 700;">{{ paciente.partos or '0' }}</p>
+                        </div>
+                        <div style="text-align: center; border: 1px solid var(--gray-200); padding: 1rem; border-radius: 0.75rem;">
+                            <p class="stat-label">Cesáreas</p>
+                            <p style="font-size: 1.25rem; font-weight: 700;">{{ paciente.cesareas or '0' }}</p>
+                        </div>
+                        <div style="text-align: center; border: 1px solid var(--gray-200); padding: 1rem; border-radius: 0.75rem;">
+                            <p class="stat-label">Abortos</p>
+                            <p style="font-size: 1.25rem; font-weight: 700;">{{ paciente.abortos or '0' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Historial Clínico (RF13) -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                        <h2>Historial Clínico</h2>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div>
+                            <p class="stat-label">Antecedentes</p>
+                            <div style="background-color: var(--gray-50); padding: 1rem; border-radius: 0.75rem; border: 1px solid var(--gray-200); min-height: 80px;">
+                                {{ paciente.antecedentes or 'Sin antecedentes registrados.' }}
+                            </div>
+                        </div>
+                        <div>
+                            <p class="stat-label">Observaciones</p>
+                            <div style="background-color: var(--gray-50); padding: 1rem; border-radius: 0.75rem; border: 1px solid var(--gray-200); min-height: 80px;">
+                                {{ paciente.observaciones or 'Sin observaciones registradas.' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Riesgo, Unidad y Censo -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                
+                <!-- Card: Nivel de Riesgo -->
+                <div class="section-card" style="text-align: center; background: linear-gradient(135deg, var(--white), var(--gray-50));">
+                    <p class="stat-label" style="margin-bottom: 1rem;">NIVEL DE RIESGO ACTUAL</p>
+                    {% if paciente.nivel_riesgo == 'alto' %}
+                        <span class="badge badge-danger" style="font-size: 1.25rem; padding: 0.75rem 2rem; width: 100%; justify-content: center; text-transform: uppercase;">Alto Riesgo</span>
+                    {% elif paciente.nivel_riesgo == 'medio' %}
+                        <span class="badge badge-warning" style="font-size: 1.25rem; padding: 0.75rem 2rem; width: 100%; justify-content: center; text-transform: uppercase;">Riesgo Medio</span>
+                    {% else %}
+                        <span class="badge badge-success" style="font-size: 1.25rem; padding: 0.75rem 2rem; width: 100%; justify-content: center; text-transform: uppercase;">Bajo Riesgo</span>
+                    {% endif %}
+                    <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 1rem;">*Calculado automáticamente según criterios clínicos</p>
+                </div>
+
+                <!-- Sección: Salud y Riesgos -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                        <h2>Estado de Salud</h2>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div>
+                            <p class="stat-label">Estado General</p>
+                            <p style="font-weight: 600;">{{ paciente.estado_salud or '—' }}</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">Riesgo Obstétrico</p>
+                            <p style="font-weight: 600; text-transform: capitalize;">{{ paciente.riesgo_obstetrico or '—' }}</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">Riesgo Social</p>
+                            <p style="font-weight: 600;">{{ paciente.riesgo_social or '—' }}</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">Factores de Riesgo</p>
+                            <p style="font-weight: 600;">{{ paciente.factores_riesgo or '—' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Unidad de Salud -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                        <h2>Unidad de Salud</h2>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <div>
+                            <p class="stat-label">Región</p>
+                            <p style="font-weight: 600; font-size: 0.875rem;">{{ paciente.region or '—' }}</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">Municipio</p>
+                            <p style="font-weight: 600; font-size: 0.875rem;">{{ paciente.municipio or '—' }}</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">Unidad Médica</p>
+                            <p style="font-weight: 600; font-size: 0.875rem;">{{ paciente.nombre_unidad or '—' }}</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">CLUES</p>
+                            <p style="font-weight: 600; font-size: 0.875rem;">{{ paciente.clues_imb or '—' }}</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">Zona de Servicios</p>
+                            <p style="font-weight: 600; font-size: 0.875rem;">{{ paciente.zona_servicios or '—' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Censo -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        <h2>Censo / Reporte</h2>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <p class="stat-label">Mes</p>
+                            <p style="font-weight: 600; font-size: 0.875rem;">{{ paciente.mes_reporte or '—' }}</p>
+                        </div>
+                        <div>
+                            <p class="stat-label">Semana Epi.</p>
+                            <p style="font-weight: 600; font-size: 0.875rem;">{{ paciente.semana_epidemiologica or '—' }}</p>
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <p class="stat-label">Fecha de Reporte</p>
+                            <p style="font-weight: 600; font-size: 0.875rem;">{{ paciente.fecha_reporte or '—' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>

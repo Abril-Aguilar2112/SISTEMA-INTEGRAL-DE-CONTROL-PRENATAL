@@ -1,0 +1,40 @@
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+from services.citas import get_citas, get_cita_by_id, update_cita
+from services.medico import get_medicos
+from models.cita import CitaUpdate
+from pydantic import ValidationError
+
+citas_bp = Blueprint('citas', __name__)
+
+@citas_bp.route('/citas')
+def citas():
+    citas = get_citas()
+    return render_template('direccion/citas/citas.html', citas=citas)
+
+@citas_bp.route('/cita_editar/<int:id_cita>', methods=['GET', 'POST'])
+def cita_editar(id_cita):
+    if request.method == 'GET':
+        cita = get_cita_by_id(id_cita)
+        medicos = get_medicos()
+        return render_template('direccion/citas/cita_editar.html', id_cita=id_cita, cita=cita, medicos=medicos)
+
+    if request.method == 'POST':
+        try:
+            form = request.form.to_dict()
+            cita_formateada = CitaUpdate(**form).model_dump(mode="json")
+
+            result = update_cita(cita_formateada, id_cita)
+            if result["message"] == "success":
+                flash("Cita actualizada exitosamente", "success")
+                return redirect(url_for("citas.citas"))
+            else:
+                flash(result["error"], "error")
+                return render_template('direccion/citas/cita_editar.html', id_cita=id_cita, cita=cita, medicos=medicos, error=result["error"])
+
+        except ValidationError as e:
+            flash(f"Error de validación: {str(e)}", "error")
+            return redirect(url_for("citas.cita_editar", id_cita=id_cita, cita=cita, medicos=medicos))
+        except Exception as e:
+            flash(f"Ocurrió un error inesperado: {str(e)}", "error")
+            return redirect(url_for("citas.cita_editar", id_cita=id_cita, cita=cita, medicos=medicos))
+           

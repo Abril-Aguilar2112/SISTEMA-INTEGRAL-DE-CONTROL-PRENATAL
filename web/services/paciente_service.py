@@ -89,6 +89,7 @@ def get_paciente_by_id(id_paciente: int):
         cp = supabase.table("control_prenatal").select("*").eq("id_paciente", id_paciente).single().execute()
         us = supabase.table("unidad_salud").select("*").eq("id_paciente", id_paciente).single().execute()
         cr = supabase.table("censo_reporte").select("*").eq("id_paciente", id_paciente).single().execute()
+        hc = supabase.table("historial_clinico").select("*").eq("id_paciente", id_paciente).single().execute()
         
         # Combinamos todo en un solo diccionario para el formulario
         paciente_data = {**p.data}
@@ -99,7 +100,8 @@ def get_paciente_by_id(id_paciente: int):
             paciente_data.update(us.data)
         if cr.data:
             paciente_data.update(cr.data)
-            
+        if hc.data:
+            paciente_data.update(hc.data)
         return {"data": paciente_data, "error": None}
     except Exception as e:
         return {"data": None, "error": str(e)}
