@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEP - Agendar Cita</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sigep-style.css') }}">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-user">
+            <div class="user-avatar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <div class="user-info">
+                <h2>SIGEP</h2>
+                <p>Director General</p>
+            </div>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a href="{{ url_for('dashboard.dashboard') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                Dashboard
+            </a></li>
+            <li><a href="{{ url_for('pacientes.pacientes') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Pacientes
+            </a></li>
+            <li><a href="{{ url_for('citas.citas') }}" class="active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                Citas
+            </a></li>
+            <li><a href="{{ url_for('censo.censo') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                Censo
+            </a></li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <a href="{{ url_for('auth.logout') }}" style="display: flex; align-items: center; gap: 0.75rem; color: var(--gray-600); text-decoration: none; font-size: 0.875rem; padding: 0.5rem 1rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Cerrar Sesión
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1>Agendar Nueva Cita</h1>
+                <p>Programa una cita para control prenatal</p>
+            </div>
+            <a href="{{ url_for('citas.citas') }}" class="btn btn-secondary">← Volver</a>
+        </div>
+
+        <!-- Contenedor para mensajes (Éxito/Error) -->
+        <div id="ui-message-container" class="{% if not get_flashed_messages() %}hidden{% endif %}">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }}">
+                            <span>{{ message }}</span>
+                            <button type="button" class="close-msg" onclick="this.parentElement.parentElement.classList.add('hidden')">&times;</button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <div id="ui-message" class="alert hidden">
+                <span id="ui-message-text"></span>
+                <button type="button" class="close-msg" onclick="this.parentElement.parentElement.classList.add('hidden')">&times;</button>
+            </div>
+        </div>
+
+        <form action="{{ url_for('citas.cita_crear') }}" method="POST">
+            <div class="card mb-6">
+                <h3 style="margin-bottom: 1.5rem;">📋 Información de la Cita</h3>
+                
+                <div class="form-group">
+                    <label class="form-label">Buscar y Seleccionar Paciente</label>
+                    <input type="text" id="patient-search" class="form-input mb-2" placeholder="Buscar por CURP, Nombre o ID...">
+                    <select name="id_paciente" id="id_paciente" class="form-select" required>
+                        <option value="">-- Seleccionar paciente --</option>
+                        {% for paciente in pacientes.data %}
+                            <option value="{{ paciente.id_paciente }}" 
+                                    data-search="{{ paciente.nombre | lower }} {{ paciente.curp | lower if paciente.curp else '' }} {{ paciente.id_paciente }}">
+                                {{ paciente.id_paciente }} - {{ paciente.nombre }} {% if paciente.curp %}({{ paciente.curp }}){% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2">
+                    <div class="form-group">
+                        <label class="form-label">Fecha de la Cita</label>
+                        <input type="date" name="fecha" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Hora</label>
+                        <select name="hora" class="form-select" required>
+                            <option value="">Seleccionar hora...</option>
+                            {% for hour in range(8, 17) %}
+                                <option value="{{ '%02d:00' % hour }}">{{ '%02d:00' % hour }} {{ 'AM' if hour < 12 else 'PM' }}</option>
+                                <option value="{{ '%02d:30' % hour }}">{{ '%02d:30' % hour }} {{ 'AM' if hour < 12 else 'PM' }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Médico Asignado</label>
+                        <select name="id_usuario" class="form-select" required>
+                            <option value="">Seleccionar médico...</option>
+                            {% for medico in medicos.data %}
+                                <option value="{{ medico.id_usuario }}">{{ medico.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Área de Atención</label>
+                        <select name="area" class="form-select" required>
+                            <option value="">Seleccionar área...</option>
+                            <option value="Consulta Médica">Consulta Médica</option>
+                            <option value="Ultrasonografía">Ultrasonografía</option>
+                            <option value="Laboratorio Clínico">Laboratorio Clínico</option>
+                            <option value="Nutrición">Nutrición</option>
+                            <option value="Psicología">Psicología</option>
+                            <option value="Odontología">Odontología</option>
+                            <option value="Urgencias">Urgencias</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Observaciones</label>
+                    <textarea name="observaciones" class="form-textarea" rows="3" placeholder="Notas adicionales sobre la cita..."></textarea>
+                </div>
+            </div>
+
+            <div class="alert alert-success mb-6">
+                <span style="font-size: 1.5rem;">📱</span>
+                <div>
+                    <strong>Notificación Automática</strong>
+                    <p style="font-size: 0.875rem; margin: 0;">La paciente recibirá la notificación de cita en su aplicación móvil inmediatamente después de confirmar.</p>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <a href="{{ url_for('citas.citas') }}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">✓ Confirmar Cita</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('patient-search');
+            const patientSelect = document.getElementById('id_paciente');
+            const originalOptions = Array.from(patientSelect.options);
+
+            // Filtrado de pacientes
+            searchInput.addEventListener('input', function() {
+                const term = this.value.toLowerCase().trim();
+                
+                // Limpiar select
+                patientSelect.innerHTML = '';
+                
+                // Filtrar y agregar opciones
+                const filteredOptions = originalOptions.filter(option => {
+                    if (option.value === "") return true; // Mantener la opción por defecto
+                    const searchData = option.getAttribute('data-search') || "";
+                    return searchData.includes(term);
+                });
+
+                filteredOptions.forEach(option => patientSelect.add(option));
+            });
+
+            // Manejo de mensajes (reutilizando lógica si existe ui-message-container)
+            const msgContainer = document.getElementById('ui-message-container');
+            const msgDiv = document.getElementById('ui-message');
+            const msgText = document.getElementById('ui-message-text');
+
+            function showUIMessage(message, type = 'success') {
+                if (!msgContainer) return;
+                msgContainer.classList.remove('hidden');
+                msgDiv.className = `alert alert-${type}`;
+                msgText.textContent = message;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // Manejo de envío de formulario (opcional si prefieres redirección directa del servidor)
+            const form = document.querySelector('form');
+            form.addEventListener('submit', async function(e) {
+                // Si quieres validación extra o envío por fetch descomenta:
+                /*
+                e.preventDefault();
+                const formData = new FormData(form);
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if (result.status === 'success') {
+                        showUIMessage('Cita agendada correctamente', 'success');
+                        setTimeout(() => window.location.href = "{{ url_for('citas.citas') }}", 1500);
+                    } else {
+                        showUIMessage('Error: ' + result.message, 'danger');
+                    }
+                } catch (error) {
+                    showUIMessage('Ocurrió un error al procesar la solicitud', 'danger');
+                }
+                */
+            });
+        });
+    </script>
+</body>
+</html>

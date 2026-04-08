@@ -1,8 +1,7 @@
 from utils.supabase_client import supabase
 
-def get_pacientes(page=1, search='', riesgo='', semanas=''):
+def get_pacientes(page=1, search='', riesgo='', semanas='', per_page=10):
     try:
-        per_page = 10
         offset = (page - 1) * per_page
 
         query = supabase.table("pacientes_dashboard").select("*", count="exact")

@@ -121,6 +121,21 @@ def set_estado_cita(id_cita: int, estado: str):
             "error": str(e)
         }
 
+def crear_cita(cita: dict):
+    try:
+        response = supabase.table("cita").insert(cita).execute()
+        return {
+            "data": response.data,
+            "message": "success",
+            "error": None
+        }
+    except Exception as e:
+        return {
+            "data": {},
+            "message": "error",
+            "error": str(e)
+        }
+
 def upsert_inasistencia(id_cita: int, motivo: str, justificada: bool = True):
     try:
         existing = supabase.table("inasistencia").select("id_inasistencia").eq("id_cita", id_cita).limit(1).execute()

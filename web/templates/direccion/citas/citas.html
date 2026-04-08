@@ -118,7 +118,7 @@
                 <h1>Gestión de Citas</h1>
                 <p>Administra y visualiza las citas programadas</p>
             </div>
-            <a href="cita_crear.html" class="btn btn-primary">
+            <a href="{{ url_for('citas.cita_crear') }}" class="btn btn-primary">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 Nueva Cita
             </a>
@@ -149,10 +149,10 @@
                         <label class="form-label">Estado</label>
                         <select name="estado" class="form-select">
                             <option value="">Todos</option>
-                            <option value="confirmada" {{ 'selected' if request.args.get('estado') == 'confirmada' }}>Confirmadas</option>
-                            <option value="pendiente" {{ 'selected' if request.args.get('estado') == 'pendiente' }}>Pendientes</option>
-                            <option value="completada" {{ 'selected' if request.args.get('estado') == 'completada' }}>Completadas</option>
-                            <option value="inasistencia" {{ 'selected' if request.args.get('estado') == 'inasistencia' }}>Inasistencias</option>
+                            <option value="confirmada" {{ 'selected' if request.args.get('estado') == 'confirmada' else '' }}>Confirmadas</option>
+                            <option value="pendiente" {{ 'selected' if request.args.get('estado') == 'pendiente' else '' }}>Pendientes</option>
+                            <option value="completada" {{ 'selected' if request.args.get('estado') == 'completada' else '' }}>Completadas</option>
+                            <option value="inasistencia" {{ 'selected' if request.args.get('estado') == 'inasistencia' else '' }}>Inasistencias</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-secondary">
