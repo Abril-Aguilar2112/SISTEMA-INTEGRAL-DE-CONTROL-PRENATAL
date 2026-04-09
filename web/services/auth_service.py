@@ -3,43 +3,26 @@ from models.auth import LoginRequest
 
 def register_user(data):
     try:
+        # Verificar si el correo ya existe en la base de datos antes de registrar en Auth
         existing = supabase.table("usuario").select().eq("correo", data.correo).execute()
-
         if existing.data:
-            return {"data": {}, "message": "Ocurrio un error", "error": "El correo ya está registrado"}
+            return {"data": {}, "message": "Ocurrio un error", "error": "El correo ya está registrado en el sistema"}
 
+        # Registrar en Supabase Auth
         auth_response = supabase.auth.sign_up({
             "email": data.correo,
             "password": data.password
         })
 
         if auth_response.user is None:
-            return {"data": {}, "message": "Ocurrio un error", "error": "No se pudo registrar"}
-
-        
-        user_data = {
-            "auth_id": auth_response.user.id,
-            "correo": data.correo,
-            "nombre": data.nombre,
-            "rol": data.rol
-        }
-
-        db_response = supabase.table("usuario").insert(user_data).execute()
-
-        if not db_response.data:
-            return {"data": {}, "message": "Ocurrio un error", "error": "No se pudo registrar el usuario"}
-
-        usuario_db = db_response.data
+            return {"data": {}, "message": "Ocurrio un error", "error": "No se pudo registrar en la autenticación"}
 
         return {
             "data": {
-                "id_usuario": usuario_db["id_usuario"],
-                "nombre": usuario_db["nombre"],
-                "correo": usuario_db["correo"],
-                "rol": usuario_db["rol"],
-                "access_token": auth_response.session.access_token
+                "auth_id": auth_response.user.id,
+                "correo": data.correo
             },
-            "message": "Usuario registrado exitosamente",
+            "message": "Usuario registrado en autenticación exitosamente",
             "error": None
         }
 
@@ -82,3 +65,16 @@ def login_user(data: LoginRequest):
         }
     except Exception as e:
         return {"data": {}, "message": "Ocurrio un error", "error": str(e)}
+
+def update_password(password: str):
+    try:
+        auth_response = supabase.auth.update_user({
+            "password": password
+        })
+        if auth_response.user is None:
+            return {"data": {}, "message": "Ocurrio un error", "error": "No se pudo actualizar la contraseña"}
+        return {"data": {}, "message": "Contraseña actualizada exitosamente", "error": None}
+    except Exception as e:
+        return {"data": {}, "message": "Ocurrio un error", "error": str(e)}
+        
+       

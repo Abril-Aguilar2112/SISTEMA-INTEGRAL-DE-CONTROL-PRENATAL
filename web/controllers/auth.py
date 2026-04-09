@@ -11,7 +11,6 @@ def login():
         password = request.form['password'].strip()
 
         response = login_user(LoginRequest(correo=correo, password=password))
-        print(response)
 
         if response.get('error') == 'Invalid login credentials':
             response['error'] = 'Credenciales inválidas'
@@ -23,7 +22,6 @@ def login():
             session['user_id'] = response.get('data').get('id_usuario')
             session['rol'] = response.get('data').get('rol')
             session['correo'] = response.get('data').get('correo')
-            print(session)
 
             if session.get('rol') == 'director_general':
                 return redirect(url_for('dashboard.dashboard'))
