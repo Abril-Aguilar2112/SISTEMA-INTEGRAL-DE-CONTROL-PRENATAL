@@ -6,6 +6,9 @@ from controllers.pacientes import pacientes_bp
 from controllers.citas import citas_bp
 from controllers.inasistencias import inasistencias_bp
 from controllers.censo import censo_bp
+from controllers.reportes import reportes_bp
+
+
 
 def create_app():
     app = Flask(__name__)
@@ -18,5 +21,6 @@ def create_app():
     app.register_blueprint(citas_bp, url_prefix="/gestion")
     app.register_blueprint(inasistencias_bp, url_prefix="/gestion")
     app.register_blueprint(censo_bp, url_prefix="/gestion")
+    app.register_blueprint(reportes_bp, url_prefix="/gestion")
 
     return app

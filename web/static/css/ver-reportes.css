@@ -1,0 +1,85 @@
+.filters-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    align-items: flex-end;
+}
+
+.report-summary-card {
+    background: var(--gray-50);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    border: 1px solid var(--gray-200);
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.summary-label {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.summary-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gray-900);
+}
+
+.badge-area {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-enfermera { background: #dcfce7; color: #166534; }
+.badge-medico { background: #dbeafe; color: #1e40af; }
+.badge-trabajo_social { background: #fef3c7; color: #92400e; }
+.badge-director_general { background: #f3e8ff; color: #6b21a8; }
+
+.modal-preview {
+    max-width: 800px !important;
+}
+
+.preview-section {
+    margin-bottom: 2rem;
+}
+
+.preview-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    background: var(--gray-50);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+}
+
+.preview-item {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--gray-200);
+    padding-bottom: 0.5rem;
+}
+
+.preview-label {
+    color: var(--gray-600);
+    font-weight: 500;
+}
+
+.preview-value {
+    font-weight: 600;
+    color: var(--purple-primary);
+}
