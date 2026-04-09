@@ -9,7 +9,7 @@ inasistencias_bp = Blueprint('inasistencias', __name__)
 def get_inasistencias():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
-    if session['rol'] != 'director_general'	:
+    if session['rol'] not in ['director_general', 'trabajo_social']:
         return redirect(url_for('auth.login'))
 
     search = request.args.get('search')
@@ -20,14 +20,14 @@ def get_inasistencias():
     inasistencias = get_inasistencias_service(search, estado, fecha, justificada)
 
     if inasistencias.get("error"):
-        return render_template('direccion/inasistencias.html', inasistencias=inasistencias)
-    return render_template('direccion/inasistencias.html', inasistencias=inasistencias)
+        return render_template('direccion/inasistencias.html', inasistencias=inasistencias, rol=session['rol'])
+    return render_template('direccion/inasistencias.html', inasistencias=inasistencias, rol=session['rol'])
 
 @inasistencias_bp.route('/inasistencias/actualizar_inasistencia/<int:id_inasistencia>', methods=['POST']) 
 def actualizar_inasistencia(id_inasistencia):
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
-    if session['rol'] != 'director_general'	:
+    if session['rol'] not in ['director_general', 'trabajo_social']:
         return redirect(url_for('auth.login'))
 
     form = {}

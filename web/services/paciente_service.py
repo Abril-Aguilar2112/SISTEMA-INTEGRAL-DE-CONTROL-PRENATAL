@@ -1,10 +1,67 @@
 from utils.supabase_client import supabase
 
-def get_pacientes(page=1, search='', riesgo='', semanas='', per_page=10):
+def get_pacientes(page=1, search='', riesgo='', semanas='', per_page=10, id_medico=None):
     try:
         offset = (page - 1) * per_page
 
         query = supabase.table("pacientes_dashboard").select("*", count="exact")
+
+        if search:
+            query = query.ilike("nombre", f"%{search}%")
+
+        if riesgo:
+            query = query.eq("nivel_riesgo", riesgo)
+
+        if id_medico:
+            query = query.eq("usuario", id_medico)
+
+        if semanas:
+            rangos = {
+                "1-12": (1, 12),
+                "13-24": (13, 24),
+                "25-36": (25, 36),
+                "37+": (37, None)
+            }
+
+            min_s, max_s = rangos.get(semanas, (None, None))
+
+            if min_s is not None:
+                query = query.gte("semanas_gestacion", min_s)
+
+            if max_s is not None:
+                query = query.lte("semanas_gestacion", max_s)
+
+        query = query.not_.is_("semanas_gestacion", None)
+
+        response = query.range(offset, offset + per_page - 1).execute()
+
+        total = response.count or 0
+        total_pages = (total // per_page) + (1 if total % per_page else 0)
+
+        return {
+            "data": response.data or [],
+            "page": page,
+            "total_pages": total_pages,
+            "total_records": total,
+            "page_size": per_page,
+            "error": None
+        }
+
+    except Exception as e:
+        return {
+            "data": [],
+            "page": 1,
+            "total_pages": 0,
+            "total_records": 0,
+            "page_size": 10,
+            "error": str(e)
+        }
+
+def get_pacientes_medico(id_medico: int, page=1, search='', riesgo='', semanas='', per_page=10):
+    try:
+        offset = (page - 1) * per_page
+
+        query = supabase.table("vista_pacientes_por_medico").select("*", count="exact").eq("id_medico", id_medico)
 
         if search:
             query = query.ilike("nombre", f"%{search}%")
@@ -53,6 +110,7 @@ def get_pacientes(page=1, search='', riesgo='', semanas='', per_page=10):
             "page_size": 10,
             "error": str(e)
         }
+
 
 def crear_paciente(data):
     try:

@@ -9,21 +9,26 @@ citas_bp = Blueprint('citas', __name__)
 
 @citas_bp.route('/citas')
 def citas():
-    if 'user_id' not in session or session.get('rol') != 'director_general':
+    if 'user_id' not in session or session.get('rol') not in ['director_general', 'medico', 'trabajo_social']:
         return redirect(url_for('auth.login'))
         
     search = request.args.get("search")
     fecha = request.args.get("fecha")
     estado = request.args.get("estado")
 
-    citas = get_citas(search, fecha, estado)
+    if session['rol'] == 'medico':
+        id_medico = session['user_id']
+        citas = get_citas(search, fecha, estado, id_medico)
+        print(citas)
+    else:
+        citas = get_citas(search, fecha, estado)
 
     stats = get_stats_citas()
-    return render_template('direccion/citas/citas.html', citas=citas, stats=stats)  
+    return render_template('direccion/citas/citas.html', citas=citas, stats=stats, rol=session['rol'])  
 
 @citas_bp.route('/cita_crear', methods=['GET', 'POST'])
 def cita_crear():
-    if 'user_id' not in session or session.get('rol') != 'director_general':
+    if 'user_id' not in session or session.get('rol') not in ['director_general', 'medico']:
         return redirect(url_for('auth.login'))
 
     if request.method == 'POST':
@@ -52,17 +57,17 @@ def cita_crear():
     medicos = get_medicos()
     pacientes = get_pacientes(per_page=1000)
         
-    return render_template('direccion/citas/cita_crear.html', medicos=medicos, pacientes=pacientes)
+    return render_template('direccion/citas/cita_crear.html', medicos=medicos, pacientes=pacientes, rol=session['rol'])
 
 @citas_bp.route('/cita_editar/<int:id_cita>', methods=['GET', 'POST'])
 def cita_editar(id_cita):
-    if 'user_id' not in session or session.get('rol') != 'director_general':
+    if 'user_id' not in session or session.get('rol') not in ['director_general', 'medico']:
         return redirect(url_for('auth.login'))
         
     if request.method == 'GET':
         cita = get_cita_by_id(id_cita)
         medicos = get_medicos()
-        return render_template('direccion/citas/cita_editar.html', id_cita=id_cita, cita=cita, medicos=medicos)
+        return render_template('direccion/citas/cita_editar.html', id_cita=id_cita, cita=cita, medicos=medicos, rol=session['rol'])
 
     if request.method == 'POST':
         try:
@@ -77,7 +82,7 @@ def cita_editar(id_cita):
                 flash(result["error"], "error")
                 cita = get_cita_by_id(id_cita)
                 medicos = get_medicos()
-                return render_template('direccion/citas/cita_editar.html', id_cita=id_cita, cita=cita, medicos=medicos, error=result["error"])
+                return render_template('direccion/citas/cita_editar.html', id_cita=id_cita, cita=cita, medicos=medicos, error=result["error"], rol=session['rol'])
 
         except ValidationError as e:
             flash(f"Error de validación: {str(e)}", "error")
@@ -88,7 +93,7 @@ def cita_editar(id_cita):
 
 @citas_bp.route('/reagendar/<int:id_cita>', methods=['POST'])
 def reagendar_cita(id_cita):
-    if 'user_id' not in session or session.get('rol') != 'director_general':
+    if 'user_id' not in session or session.get('rol') not in ['director_general', 'medico']:
         return jsonify({"status": "error", "message": "No tiene permisos para realizar esta acción"}), 403
     try:
         form = request.form.to_dict()
@@ -114,6 +119,8 @@ def reagendar_cita(id_cita):
 
 @citas_bp.route('/justificar/<int:id_cita>', methods=['POST'])
 def justificar_cita(id_cita):
+    if 'user_id' not in session or session.get('rol') not in ['director_general']:
+        return redirect(url_for('auth.login'))
     try:
         motivo = (request.form.get("motivo") or "").strip()
         if not motivo:
@@ -137,6 +144,8 @@ def justificar_cita(id_cita):
 
 @citas_bp.route('/cita/estado/<int:id_cita>', methods=['POST'])
 def set_cita_estado(id_cita):
+    if 'user_id' not in session or session.get('rol') not in ['director_general', 'medico']:
+        return jsonify({"status": "error", "message": "No tiene permisos para realizar esta acción"}), 403
     if request.method == 'POST':
         try:
             estado = request.form.get('estado')

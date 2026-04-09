@@ -7,14 +7,14 @@ dashboard_bp = Blueprint('dashboard', __name__)
 def dashboard():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
-    if session['rol'] != 'director_general'	:
+    if session['rol'] not in ['director_general', 'enfermera', 'medico', 'trabajo_social']:
         return redirect(url_for('auth.login'))
     
     stats = get_dashboard_stats()
     actividad_reciente = get_actividad_reciente()
     estadistica_dashboard = get_estadistica_dashboard()
     
-    return render_template('direccion/dashboard.html', stats_data=stats, actividad_reciente=actividad_reciente, estadistica_dashboard=estadistica_dashboard)
+    return render_template('direccion/dashboard.html', stats_data=stats, actividad_reciente=actividad_reciente, estadistica_dashboard=estadistica_dashboard, rol=session['rol'])
 
 
     

@@ -17,9 +17,11 @@ def get_stats_citas():
             "message": "error",
             "error": str(e)
         }
-def get_citas(search='', fecha='', estado=''):
+def get_citas(search='', fecha='', estado='', id_medico=None):
     try:
         query = supabase.from_("vista_citas").select("*", count="exact")
+        if id_medico:
+            query = query.eq("id_medico", id_medico)
 
         if search:
             if search.isdigit():

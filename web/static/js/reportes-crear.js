@@ -47,6 +47,12 @@ function renderFormularioPorRol(rol) {
     if (rol === 'director_general' && typeof PRECARGA_DATA !== 'undefined' && PRECARGA_DATA) {
         aplicarPrecargaDirector(PRECARGA_DATA);
         cargarDatosReporteAnterior(rol);
+    } else if (rol === 'enfermera' && typeof PRECARGA_DATA !== 'undefined' && PRECARGA_DATA) {
+        aplicarPrecargaEnfermera(PRECARGA_DATA);
+        cargarDatosReporteAnterior(rol);
+    } else if (rol === 'medico' && typeof PRECARGA_DATA !== 'undefined' && PRECARGA_DATA) {
+        aplicarPrecargaMedico(PRECARGA_DATA);
+        cargarDatosReporteAnterior(rol);
     }
     
     actualizarJsonPreview();
@@ -106,6 +112,126 @@ function calcularVariacionesDirector() {
             varEl.value = '0%';
         }
     });
+}
+
+function aplicarPrecargaMedico(data) {
+    if (!data) return;
+    
+    // 1. Resumen de actividad
+    if (data.resumen) {
+        const r = data.resumen;
+        if (document.getElementById('med_consultas_realizadas')) 
+            document.getElementById('med_consultas_realizadas').value = r.consultas_realizadas || 0;
+        if (document.getElementById('med_pacientes_atendidas')) 
+            document.getElementById('med_pacientes_atendidas').value = r.pacientes_atendidas || 0;
+        if (document.getElementById('med_pacientes_con_signos_alarma')) 
+            document.getElementById('med_pacientes_con_signos_alarma').value = r.pacientes_con_signos_alarma || 0;
+    }
+    
+    // 2. Pacientes Atendidas
+    if (data.pacientes && Array.isArray(data.pacientes)) {
+        const tbody = document.getElementById('pacientesMedicoBody');
+        if (tbody) {
+            tbody.innerHTML = '';
+            data.pacientes.forEach(p => {
+                const row = document.createElement('tr');
+                
+                const nombre = p.nombre_completo || p.nombre || '';
+                const semanas = p.semanas_gestacion || p.sdg || '';
+                const riesgo = (p.nivel_riesgo || p.riesgo || '').toLowerCase();
+                const riesgoObst = p.riesgo_obstetrico || '';
+                const consultas = p.consultas_otorgadas || p.consultas || 0;
+                const ultimaConsulta = p.ultima_consulta_fecha || p.ultima_atencion || '';
+                const diagnostico = p.diagnostico || '';
+                const tratamiento = p.tratamiento || '';
+                const cumplidas = p.citas_cumplidas === true;
+
+                row.innerHTML = `
+                    <td><input type="text" value="${nombre}" class="med-nombre" placeholder="Nombre"></td>
+                    <td><input type="number" value="${semanas}" class="med-semanas" placeholder="Sem." min="0"></td>
+                    <td>
+                        <select class="med-riesgo">
+                            <option value="">Seleccionar</option>
+                            <option value="bajo" ${riesgo === 'bajo' ? 'selected' : ''}>Bajo</option>
+                            <option value="medio" ${riesgo === 'medio' ? 'selected' : ''}>Medio</option>
+                            <option value="alto" ${riesgo === 'alto' ? 'selected' : ''}>Alto</option>
+                        </select>
+                    </td>
+                    <td><input type="text" value="${riesgoObst}" class="med-riesgo-obs" placeholder="Riesgo obst."></td>
+                    <td><input type="number" value="${consultas}" class="med-consultas" placeholder="#" min="0"></td>
+                    <td><input type="date" value="${ultimaConsulta}" class="med-ultima"></td>
+                    <td><input type="text" value="${diagnostico}" class="med-diagnostico" placeholder="Diagnóstico"></td>
+                    <td><input type="text" value="${tratamiento}" class="med-tratamiento" placeholder="Tratamiento"></td>
+                    <td><input type="checkbox" class="med-cumplidas" style="width: auto;" ${cumplidas ? 'checked' : ''}></td>
+                    <td><button type="button" class="btn-remove-row" onclick="this.closest('tr').remove(); actualizarJsonPreview();">×</button></td>
+                `;
+                tbody.appendChild(row);
+                row.querySelectorAll('input, select').forEach(el => el.addEventListener('input', actualizarJsonPreview));
+            });
+        }
+    }
+    
+    showToast('Datos de actividad y pacientes precargados', 'success');
+}
+
+function aplicarPrecargaEnfermera(data) {
+    if (!data) return;
+    
+    // 1. Resumen de pacientes y citas
+    if (data.resumen) {
+        const r = data.resumen;
+        if (document.getElementById('enf_total_pacientes_activas')) 
+            document.getElementById('enf_total_pacientes_activas').value = r.total_pacientes_activas || 0;
+        if (document.getElementById('enf_pacientes_nuevas')) 
+            document.getElementById('enf_pacientes_nuevas').value = r.pacientes_nuevas || 0;
+        
+        calcularEnfermeraSeguimiento();
+        
+        if (document.getElementById('enf_citas_programadas')) 
+            document.getElementById('enf_citas_programadas').value = r.citas_programadas || 0;
+        if (document.getElementById('enf_citas_cumplidas')) 
+            document.getElementById('enf_citas_cumplidas').value = r.citas_cumplidas || 0;
+        if (document.getElementById('enf_citas_canceladas')) 
+            document.getElementById('enf_citas_canceladas').value = r.citas_canceladas || 0;
+        if (document.getElementById('enf_inasistencias')) 
+            document.getElementById('enf_inasistencias').value = r.inasistencias || 0;
+    }
+    
+    // 2. Censo Nominal
+    if (data.censo && Array.isArray(data.censo)) {
+        const tbody = document.getElementById('censoEnfermeraBody');
+        if (tbody) {
+            tbody.innerHTML = '';
+            data.censo.forEach(p => {
+                const row = document.createElement('tr');
+                // Mapeo de campos según vista_censo_tabla
+                const nombre = p.nombre_completo || p.nombre || '';
+                const edad = p.edad || '';
+                const semanas = p.sdg || p.semanas_gestacion || '';
+                const riesgo = (p.riesgo || p.nivel_riesgo || '').toLowerCase();
+                const ultimaAtencion = p.fecha_ultima_atencion || p.ultima_atencion || '';
+
+                row.innerHTML = `
+                    <td><input type="text" value="${nombre}" placeholder="Nombre completo"></td>
+                    <td><input type="number" value="${edad}" placeholder="Edad" min="0"></td>
+                    <td><input type="number" value="${semanas}" placeholder="Semanas" min="0"></td>
+                    <td>
+                        <select>
+                            <option value="">Seleccionar</option>
+                            <option value="bajo" ${riesgo === 'bajo' ? 'selected' : ''}>Bajo</option>
+                            <option value="medio" ${riesgo === 'medio' ? 'selected' : ''}>Medio</option>
+                            <option value="alto" ${riesgo === 'alto' ? 'selected' : ''}>Alto</option>
+                        </select>
+                    </td>
+                    <td><input type="date" value="${ultimaAtencion}"></td>
+                    <td><button type="button" class="btn-remove-row" onclick="this.closest('tr').remove(); actualizarJsonPreview();">×</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+    }
+    
+    showToast('Datos del censo y resumen precargados', 'success');
 }
 
 function aplicarPrecargaDirector(data) {
@@ -702,22 +828,29 @@ function preLlenarFormulario(reporte) {
             tbody.innerHTML = '';
             d.censo.forEach(p => {
                 const row = document.createElement('tr');
+                const nombre = p.nombre_completo || p.nombre || '';
+                const edad = p.edad || '';
+                const semanas = p.sdg || p.semanas_gestacion || '';
+                const riesgo = (p.riesgo || p.nivel_riesgo || '').toLowerCase();
+                const ultimaAtencion = p.fecha_ultima_atencion || p.ultima_atencion || '';
+
                 row.innerHTML = `
-                    <td><input type="text" value="${p.nombre || ''}"></td>
-                    <td><input type="number" value="${p.edad || ''}"></td>
-                    <td><input type="number" value="${p.semanas_gestacion || ''}"></td>
+                    <td><input type="text" value="${nombre}" placeholder="Nombre completo"></td>
+                    <td><input type="number" value="${edad}" placeholder="Edad" min="0"></td>
+                    <td><input type="number" value="${semanas}" placeholder="Semanas" min="0"></td>
                     <td>
                         <select>
                             <option value="">Seleccionar</option>
-                            <option value="bajo" ${p.nivel_riesgo === 'bajo' ? 'selected' : ''}>Bajo</option>
-                            <option value="medio" ${p.nivel_riesgo === 'medio' ? 'selected' : ''}>Medio</option>
-                            <option value="alto" ${p.nivel_riesgo === 'alto' ? 'selected' : ''}>Alto</option>
+                            <option value="bajo" ${riesgo === 'bajo' ? 'selected' : ''}>Bajo</option>
+                            <option value="medio" ${riesgo === 'medio' ? 'selected' : ''}>Medio</option>
+                            <option value="alto" ${riesgo === 'alto' ? 'selected' : ''}>Alto</option>
                         </select>
                     </td>
-                    <td><input type="date" value="${p.fecha_ultima_atencion || ''}"></td>
+                    <td><input type="date" value="${ultimaAtencion}"></td>
                     <td><button type="button" class="btn-remove-row" onclick="this.closest('tr').remove(); actualizarJsonPreview();">×</button></td>
                 `;
                 tbody.appendChild(row);
+                row.querySelectorAll('input, select').forEach(el => el.addEventListener('input', actualizarJsonPreview));
             });
         }
     } else if (rol === 'medico') {
@@ -733,26 +866,37 @@ function preLlenarFormulario(reporte) {
             tbody.innerHTML = '';
             d.pacientes.forEach(p => {
                 const row = document.createElement('tr');
+                const nombre = p.nombre_completo || p.nombre || '';
+                const semanas = p.semanas_gestacion || p.sdg || '';
+                const riesgo = (p.nivel_riesgo || p.riesgo || '').toLowerCase();
+                const riesgoObst = p.riesgo_obstetrico || '';
+                const consultas = p.consultas_otorgadas || p.consultas || 0;
+                const ultimaConsulta = p.ultima_consulta_fecha || p.ultima_atencion || '';
+                const diagnostico = p.diagnostico || '';
+                const tratamiento = p.tratamiento || '';
+                const cumplidas = p.citas_cumplidas === true;
+
                 row.innerHTML = `
-                    <td><input type="text" class="med-nombre" value="${p.nombre || ''}"></td>
-                    <td><input type="number" class="med-semanas" value="${p.semanas_gestacion || ''}"></td>
+                    <td><input type="text" class="med-nombre" value="${nombre}"></td>
+                    <td><input type="number" class="med-semanas" value="${semanas}"></td>
                     <td>
                         <select class="med-riesgo">
                             <option value="">Seleccionar</option>
-                            <option value="bajo" ${p.nivel_riesgo === 'bajo' ? 'selected' : ''}>Bajo</option>
-                            <option value="medio" ${p.nivel_riesgo === 'medio' ? 'selected' : ''}>Medio</option>
-                            <option value="alto" ${p.nivel_riesgo === 'alto' ? 'selected' : ''}>Alto</option>
+                            <option value="bajo" ${riesgo === 'bajo' ? 'selected' : ''}>Bajo</option>
+                            <option value="medio" ${riesgo === 'medio' ? 'selected' : ''}>Medio</option>
+                            <option value="alto" ${riesgo === 'alto' ? 'selected' : ''}>Alto</option>
                         </select>
                     </td>
-                    <td><input type="text" class="med-riesgo-obs" value="${p.riesgo_obstetrico || ''}"></td>
-                    <td><input type="number" class="med-consultas" value="${p.consultas_otorgadas || ''}"></td>
-                    <td><input type="date" class="med-ultima" value="${p.ultima_consulta_fecha || ''}"></td>
-                    <td><input type="text" class="med-diagnostico" value="${p.diagnostico || ''}"></td>
-                    <td><input type="text" class="med-tratamiento" value="${p.tratamiento || ''}"></td>
-                    <td><input type="checkbox" class="med-cumplidas" style="width: auto;" ${p.citas_cumplidas ? 'checked' : ''}></td>
+                    <td><input type="text" class="med-riesgo-obs" value="${riesgoObst}"></td>
+                    <td><input type="number" class="med-consultas" value="${consultas}"></td>
+                    <td><input type="date" class="med-ultima" value="${ultimaConsulta}"></td>
+                    <td><input type="text" class="med-diagnostico" value="${diagnostico}"></td>
+                    <td><input type="text" class="med-tratamiento" value="${tratamiento}"></td>
+                    <td><input type="checkbox" class="med-cumplidas" style="width: auto;" ${cumplidas ? 'checked' : ''}></td>
                     <td><button type="button" class="btn-remove-row" onclick="this.closest('tr').remove(); actualizarJsonPreview();">×</button></td>
                 `;
                 tbody.appendChild(row);
+                row.querySelectorAll('input, select').forEach(el => el.addEventListener('input', actualizarJsonPreview));
             });
         }
     } else if (rol === 'trabajo_social') {

@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, session, redirect, url_for, render_template, flash
 from pydantic import ValidationError
-from services.paciente_service import get_pacientes, get_paciente_by_id, registrar_paciente, actualizar_paciente
+from services.paciente_service import get_pacientes, get_paciente_by_id, registrar_paciente, actualizar_paciente, get_pacientes_medico
 from models.paciente import PacienteCreate, PacienteUpdate
 
 pacientes_bp = Blueprint('pacientes', __name__)
@@ -9,7 +9,8 @@ pacientes_bp = Blueprint('pacientes', __name__)
 def pacientes():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
-    if session['rol'] != 'director_general'	:
+    
+    if session['rol'] not in ['director_general', 'enfermera', 'medico']	:
         return redirect(url_for('auth.login'))
 
     page = int(request.args.get('page', 1))
@@ -17,6 +18,29 @@ def pacientes():
     riesgo = request.args.get('riesgo', '')
     semanas = request.args.get('semanas', '')
 
+    
+    if session['rol'] == 'medico':
+        id_medico = session['user_id']
+        result = get_pacientes_medico(
+            page=page,
+            search=search,
+            riesgo=riesgo,
+            semanas=semanas,
+            id_medico=id_medico
+        )
+
+        print(result)
+
+        return render_template('direccion/pacientes/pacientes.html', pacientes=result, rol=session['rol'])
+    
+    else:
+        result = get_pacientes(
+            page=page,
+            search=search,
+            riesgo=riesgo,
+            semanas=semanas
+        )
+    
     result = get_pacientes(
         page=page,
         search=search,
@@ -24,16 +48,16 @@ def pacientes():
         semanas=semanas
     )
 
-    return render_template('direccion/pacientes/pacientes.html', pacientes=result)
+    return render_template('direccion/pacientes/pacientes.html', pacientes=result, rol=session['rol'])
 
 @pacientes_bp.route("/paciente_registro", methods=["GET", "POST"])
 def paciente_registro():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
-    if session['rol'] not in ['director_general', 'enfermera']	:
+    if session['rol'] not in ['director_general', 'enfermera', 'medico']	:
         return redirect(url_for('auth.login'))
     if request.method == "GET":
-        return render_template("direccion/pacientes/paciente_registro.html")
+        return render_template("direccion/pacientes/paciente_registro.html", rol=session['rol'])
  
     try:
         paciente = PacienteCreate(**request.form)
@@ -44,15 +68,15 @@ def paciente_registro():
  
         if result.get("error"):
             error = result.get("error", "Error al registrar")
-        return render_template("direccion/pacientes/paciente_registro.html", error=error)
+        return render_template("direccion/pacientes/paciente_registro.html", error=error, rol=session['rol'])
 
     except ValidationError as e:
         flash(str(e), "error")
-        return render_template("direccion/pacientes/paciente_registro.html", error=str(e))
+        return render_template("direccion/pacientes/paciente_registro.html", error=str(e), rol=session['rol'])
 
 @pacientes_bp.route("/paciente_editar/<int:id_paciente>", methods=["GET", "POST"])
 def paciente_editar(id_paciente):
-    if 'user_id' not in session or session.get('rol') != 'director_general':
+    if 'user_id' not in session or session.get('rol') not in ['director_general', 'enfermera', 'medico']:
         return redirect(url_for('auth.login'))
         
     if request.method == "GET":
@@ -61,7 +85,7 @@ def paciente_editar(id_paciente):
         if paciente.get("error"):
             return redirect(url_for("pacientes.pacientes"))
 
-        return render_template('direccion/pacientes/paciente_editar.html', paciente=paciente, id_paciente=id_paciente, error=None)
+        return render_template('direccion/pacientes/paciente_editar.html', paciente=paciente, id_paciente=id_paciente, error=None, rol=session['rol'])
 
     try:
         form_data = request.form.to_dict()
@@ -78,20 +102,20 @@ def paciente_editar(id_paciente):
  
         error = result.get("error") if result else "Error desconocido"
     
-        return render_template('direccion/pacientes/paciente_editar.html', paciente=paciente, id_paciente=id_paciente, error=error)
+        return render_template('direccion/pacientes/paciente_editar.html', paciente=paciente, id_paciente=id_paciente, error=error, rol=session['rol'])
 
     except ValidationError as e:
         error = str(e)
-        return render_template('direccion/pacientes/paciente_editar.html', paciente=paciente, id_paciente=id_paciente, error=error)
+        return render_template('direccion/pacientes/paciente_editar.html', paciente=paciente, id_paciente=id_paciente, error=error, rol=session['rol'])
 
     except Exception as e:
-        return render_template('direccion/pacientes/paciente_editar.html', paciente=paciente, id_paciente=id_paciente, error=error)
+        return render_template('direccion/pacientes/paciente_editar.html', paciente=paciente, id_paciente=id_paciente, error=error, rol=session['rol'])
 
 @pacientes_bp.route("/paciente_detalle/<int:id_paciente>", methods=["GET"])
 def paciente_detalle(id_paciente):
-    if 'user_id' not in session or session.get('rol') != 'director_general':
+    if 'user_id' not in session or session.get('rol') not in ['director_general', 'enfermera', 'medico']:
         return redirect(url_for('auth.login'))
         
     paciente = get_paciente_by_id(id_paciente)["data"]
-    return render_template('direccion/pacientes/paciente_detalle.html', paciente=paciente)
+    return render_template('direccion/pacientes/paciente_detalle.html', paciente=paciente, rol=session['rol'])
 

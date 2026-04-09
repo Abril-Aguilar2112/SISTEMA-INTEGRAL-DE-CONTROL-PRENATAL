@@ -14,7 +14,7 @@
     <div class="user-avatar">S</div>
     <div class="user-info">
       <h2>SIGEP</h2>
-      <p>Director General</p>
+      <p>{{ rol | replace('_', ' ') | title }}</p>
     </div>
   </div>
 
@@ -25,6 +25,7 @@
         Dashboard
       </a>
     </li>
+    {% if rol != 'enfermera' %}
     <li>
       <a href="{{ url_for('pacientes.pacientes') }}">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -37,30 +38,35 @@
         Citas
       </a>
     </li>
+    {% endif %}
     <li>
-      <a href="{{ url_for('censo.censo') }}" class="active">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <a href="{{ url_for('censo.censo') }}">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
         Censo
       </a>
     </li>
+    {% if rol == 'director_general' %}
     <li>
       <a href="{{ url_for('inasistencias.get_inasistencias') }}">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         Inasistencias
       </a>
     </li>
+    {% endif %}
     <li>
       <a href="{{ url_for('reportes.reportes') }}">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         Reportes
       </a>
     </li>
+    {% if rol == 'director_general' %}
     <li>
       <a href="{{ url_for('usuarios.usuarios') }}">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         Usuarios
       </a>
     </li>
+    {% endif %}
   </ul>
 
   <div class="sidebar-footer">
@@ -96,19 +102,23 @@
     </div>
     <div class="header-actions">
       <div id="initial-actions">
+        {% if rol != 'enfermera' %}
         <a href="#" id="edit-btn" class="btn btn-secondary">
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           Editar Registro
         </a>
+        {% endif %}
         <a href="#" id="print-btn" class="btn btn-primary">
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Exportar PDF
         </a>
       </div>
+      {% if rol != 'enfermera' %}
       <div id="edit-actions" class="hidden">
         <button type="button" id="cancel-btn" class="btn btn-secondary">Cancelar</button>
         <button type="submit" form="censo-form" id="save-btn" class="btn btn-primary">Guardar Cambios</button>
       </div>
+      {% endif %}
     </div>
   </div>
 
@@ -123,7 +133,7 @@
   <!-- Permission alert -->
   <div class="alert alert-warning">
     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    Solo el personal médico, enfermeras y trabajadoras sociales pueden crear o editar registros del censo. Usted solo puede visualizar.
+    Solo el personal médico y directivo puede crear o editar registros del censo. Usted solo puede visualizar.
   </div>
 
 

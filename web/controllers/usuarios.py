@@ -29,7 +29,7 @@ def usuarios():
         flash(f"Error al obtener usuarios: {usuarios_list['error']}", 'error')
         return redirect(url_for('dashboard.dashboard'))
     
-    return render_template('direccion/usuarios/usuarios.html', usuarios=usuarios_list['data'])
+    return render_template('direccion/usuarios/usuarios.html', usuarios=usuarios_list['data'], rol=session['rol'])
 
 @usuarios_bp.route('/usuarios/crear_usuario', methods=['GET', 'POST'])
 def crear_usuario():
@@ -57,7 +57,7 @@ def crear_usuario():
             
             if auth_result['error']:
                 flash(auth_result['error'], 'error')
-                return render_template('direccion/usuarios/crear_usuario.html')
+                return render_template('direccion/usuarios/crear_usuario.html', rol=session['rol'])
             
             auth_id = auth_result['data']['auth_id']
             
@@ -73,16 +73,16 @@ def crear_usuario():
             
             if db_result['error']:
                 flash(db_result['error'], 'error')
-                return render_template('direccion/usuarios/crear_usuario.html')
+                return render_template('direccion/usuarios/crear_usuario.html', rol=session['rol'])
             
             flash('Usuario creado exitosamente', 'success')
             return redirect(url_for('usuarios.usuarios'))
             
         except Exception as e:
             flash(f"Error: {str(e)}", 'error')
-            return render_template('direccion/usuarios/crear_usuario.html')
+            return render_template('direccion/usuarios/crear_usuario.html', rol=session['rol'])
 
-    return render_template('direccion/usuarios/crear_usuario.html')
+    return render_template('direccion/usuarios/crear_usuario.html', rol=session['rol'])
 
 @usuarios_bp.route('/usuarios/editar_usuario/<int:id_usuario>', methods=['GET', 'POST'])
 def editar_usuario(id_usuario):
@@ -149,7 +149,7 @@ def editar_usuario(id_usuario):
             flash(f"Error: {str(e)}", 'error')
             return redirect(url_for('usuarios.editar_usuario', id_usuario=id_usuario))
     
-    return render_template('direccion/usuarios/editar_usuario.html', usuario=usuario['data'])
+    return render_template('direccion/usuarios/editar_usuario.html', usuario=usuario['data'], rol=session['rol'])
 
 @usuarios_bp.route('/usuarios/cambiar_estado/<int:id_usuario>/<int:estado_actual>', methods=['GET'])
 def cambiar_estado_usuario(id_usuario, estado_actual):

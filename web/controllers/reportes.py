@@ -1,5 +1,11 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, jsonify, Response
-from services.reporte import get_reportes, get_reportes_by_usuario, get_reporte_by_id, create_reporte, update_reporte, delete_reporte, precarga_reporte_direccion, get_ultimo_reporte_por_rol
+from services.reporte import (
+    get_reportes, get_reportes_by_usuario, get_reporte_by_id, 
+    create_reporte, precarga_reporte_enfermeria, precarga_censo_nominal,
+    update_reporte, delete_reporte, precarga_reporte_direccion, 
+    precarga_reporte_medico, precarga_medico_pacientes, get_ultimo_reporte_por_rol,
+    precarga_ts_resumen, precarga_ts_casos
+)
 from models.reporte import ReporteCreate, ReporteUpdate
 from pydantic import ValidationError
 import csv
@@ -15,15 +21,43 @@ def reportes():
 
 @reportes_bp.route('/reportes/crear_reporte')
 def crear_reporte():
+    print(f"DEBUG: START crear_reporte - session keys: {list(session.keys())}")
+    print(f"DEBUG: user_id={session.get('user_id')}, rol={session.get('rol')}")
     roles_permitidos = ['director_general', 'medico', 'enfermera', 'trabajo_social']
     if 'user_id' not in session or session.get('rol') not in roles_permitidos:
         return redirect(url_for('auth.login'))
     
     precarga = None
+    result = {'error': None, 'data': None}
+    
     if session.get('rol') == 'director_general':
         result = precarga_reporte_direccion()
-        if not result['error'] and result['data']:
-            precarga = result['data'][0]
+    elif session.get('rol') == 'medico':
+        res_med = precarga_reporte_medico()
+        res_pacientes = precarga_medico_pacientes()
+        
+        precarga = {
+            'resumen': res_med['data'][0] if not res_med['error'] and res_med['data'] else None,
+            'pacientes': res_pacientes['data'] if not res_pacientes['error'] and res_pacientes['data'] else []
+        }
+    elif session.get('rol') == 'enfermera':
+        res_enf = precarga_reporte_enfermeria()
+        res_censo = precarga_censo_nominal()
+        
+        precarga = {
+            'resumen': res_enf['data'][0] if not res_enf['error'] and res_enf['data'] else None,
+            'censo': res_censo['data'] if not res_censo['error'] and res_censo['data'] else []
+        }
+    elif session.get('rol') == 'trabajo_social':
+        res_resumen = precarga_ts_resumen()
+        res_casos = precarga_ts_casos()
+        
+        precarga = {
+            'resumen': res_resumen['data'][0] if not res_resumen['error'] and res_resumen['data'] else None,
+            'casos': res_casos['data'] if not res_casos['error'] and res_casos['data'] else []
+        }
+    
+    print(precarga)
             
     return render_template('reportes/reportes_crear.html', rol=session.get('rol'), precarga=precarga)
 
@@ -32,19 +66,36 @@ def api_get_reportes():
     if 'user_id' not in session:
         return jsonify({"error": "Unauthorized"}), 401
     
-    rol = request.args.get('generado_por')
+    rol_sesion = session.get('rol')
+    
+    # Lógica de filtrado por área/rol
+    generado_por_filtro = None
+    if rol_sesion == 'enfermera':
+        # Enfermera ve sus reportes y los de trabajo social
+        generado_por_filtro = ['enfermera', 'trabajo_social']
+    elif rol_sesion != 'director_general':
+        # Otros roles solo ven los de su área
+        generado_por_filtro = rol_sesion
+            
+    # Si se pasó un filtro por query param, lo respetamos si es permitido
+    rol_param = request.args.get('generado_por')
+    if rol_param:
+        if rol_sesion == 'director_general':
+            generado_por_filtro = rol_param
+        elif rol_sesion == 'enfermera' and rol_param in ['enfermera', 'trabajo_social']:
+            generado_por_filtro = rol_param
+    
     estado = request.args.get('estado')
     
-    result = get_reportes()
+    result = get_reportes(generado_por=generado_por_filtro)
     if result['error']:
         return jsonify(result), 500
         
     data = result['data']
     
-    if rol:
-        data = [r for r in data if r.get('generado_por') == rol]
     if estado:
-        data = [r for r in data if r.get('datos', {}).get('estado') == estado]
+        # Usamos (r.get('datos') or {}) para manejar casos donde 'datos' sea None en la DB
+        data = [r for r in data if (r.get('datos') or {}).get('estado') == estado]
         
     return jsonify({"data": data, "message": "success"}), 200
 

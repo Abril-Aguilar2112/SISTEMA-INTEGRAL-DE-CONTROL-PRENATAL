@@ -12,9 +12,11 @@ def login():
 
         response = login_user(LoginRequest(correo=correo, password=password))
 
+        print(response)
+
         if response.get('error') == 'Invalid login credentials':
             response['error'] = 'Credenciales inválidas'
-            return render_template('login.html', response=response)
+            return render_template('login.html', response=response, rol=None)
 
         if response.get('data'):
             session['token'] = response.get('data').get('access_token')
@@ -23,10 +25,11 @@ def login():
             session['rol'] = response.get('data').get('rol')
             session['correo'] = response.get('data').get('correo')
 
-            if session.get('rol') == 'director_general':
+            roles_permitidos = ['director_general', 'medico', 'enfermera', 'trabajo_social']
+            if session.get('rol') in roles_permitidos:
                 return redirect(url_for('dashboard.dashboard'))
 
-    return render_template('login.html', response=None)	
+    return render_template('login.html', response=None, rol=None)	
 
 @auth_bp.route('/logout')
 def logout():

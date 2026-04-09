@@ -7,30 +7,30 @@ censo_bp = Blueprint("censo", __name__)
 
 @censo_bp.route("/censo")
 def censo():
-    if 'user_id' not in session or session.get('rol') != 'director_general':
+    if 'user_id' not in session or session.get('rol') not in ['director_general', 'medico', 'enfermera']:
         return redirect(url_for('auth.login'))
         
     censo = get_censo_tabla()
     if censo["message"] == "success":
-        return render_template("direccion/censo.html", censo=censo["data"])
+        return render_template("direccion/censo.html", censo=censo["data"], rol=session['rol'])
     else:
-        return render_template("direccion/censo.html", error=censo["error"])
+        return render_template("direccion/censo.html", error=censo["error"], rol=session['rol'])
 
 @censo_bp.route('/censo/censo_detalle/<int:id_paciente>')
 def censo_detalle(id_paciente):
-    if 'user_id' not in session or session.get('rol') != 'director_general':
+    if 'user_id' not in session or session.get('rol') not in ['director_general', 'medico', 'enfermera']:
         return redirect(url_for('auth.login'))
         
     censo = get_censo_reporte(id_paciente)
     today_date = datetime.now().strftime('%d/%m/%Y')
     if censo["message"] == "success":
-        return render_template("direccion/censo_detalle.html", id_paciente=id_paciente, censo=censo, today_date=today_date)
+        return render_template("direccion/censo_detalle.html", id_paciente=id_paciente, censo=censo, today_date=today_date, rol=session['rol'])
     else:
-        return render_template("direccion/censo_detalle.html", id_paciente=id_paciente, error=censo["error"], today_date=today_date)
+        return render_template("direccion/censo_detalle.html", id_paciente=id_paciente, error=censo["error"], today_date=today_date, rol=session['rol'])
 
 @censo_bp.route('/censo/censo_actualizar/<int:id_paciente>', methods=['POST'])
 def censo_actualizar(id_paciente):
-    if 'user_id' not in session or session.get('rol') != 'director_general':
+    if 'user_id' not in session or session.get('rol') not in ['director_general', 'medico']:
         return jsonify({"status": "error", "message": "No tiene permisos para realizar esta acción"}), 403
         
     try:
