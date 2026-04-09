@@ -29,8 +29,6 @@ def pacientes():
             id_medico=id_medico
         )
 
-        print(result)
-
         return render_template('direccion/pacientes/pacientes.html', pacientes=result, rol=session['rol'])
     
     else:

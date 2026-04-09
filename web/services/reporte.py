@@ -12,7 +12,6 @@ def serialize_dates(data):
 
 def get_reportes(generado_por=None):
     try:
-        print(f"DEBUG: get_reportes(generado_por={generado_por})")
         query = supabase.table('reporte').select("*")
         if generado_por:
             if isinstance(generado_por, list):
@@ -22,9 +21,7 @@ def get_reportes(generado_por=None):
         
         response = query.execute()
         data = response.data or []
-        print(f"DEBUG: get_reportes data count: {len(data)}")
         
-        # Aseguramos que 'datos' sea un diccionario y fechas sean strings
         for r in data:
             if r.get('datos') and isinstance(r['datos'], str):
                 r['datos'] = json.loads(r['datos'])
@@ -37,7 +34,6 @@ def get_reportes(generado_por=None):
             "error": None
         }
     except Exception as e:
-        print(f"DEBUG: get_reportes error: {str(e)}")
         return {
             "data": [],
             "message": "error",
@@ -129,16 +125,13 @@ def precarga_censo_nominal():
     
 def precarga_reporte_medico():
     try:
-        print("DEBUG: precarga_reporte_medico() - Area General")
         response = supabase.table('vista_precarga_medico_resumen').select("*").execute()
-        print(f"DEBUG: precarga_reporte_medico data count: {len(response.data or [])}")
         return {
             "data": response.data or [],
             "message": "success",
             "error": None
         }
     except Exception as e:
-        print(f"DEBUG: precarga_reporte_medico error: {str(e)}")
         return {
             "data": [],
             "message": "error",
@@ -147,16 +140,13 @@ def precarga_reporte_medico():
 
 def precarga_medico_pacientes():
     try:
-        print("DEBUG: precarga_medico_pacientes() - Area General")
         response = supabase.table('vista_precarga_medico_pacientes').select("*").execute()
-        print(f"DEBUG: precarga_medico_pacientes data count: {len(response.data or [])}")
         return {
             "data": response.data or [],
             "message": "success",
             "error": None
         }
     except Exception as e:
-        print(f"DEBUG: precarga_medico_pacientes error: {str(e)}")
         return {
             "data": [],
             "message": "error",
@@ -269,7 +259,6 @@ def delete_reporte(id_reporte):
 
 def get_ultimo_reporte_por_rol(rol):
     try:
-        print(f"DEBUG: get_ultimo_reporte_por_rol(rol={rol})")
         response = supabase.table('reporte')\
             .select("*")\
             .eq('generado_por', rol)\
@@ -278,9 +267,7 @@ def get_ultimo_reporte_por_rol(rol):
             .execute()
             
         data = response.data[0] if response.data else None
-        print(f"DEBUG: get_ultimo_reporte_por_rol data: {data is not None}")
         
-        # Aseguramos que 'datos' sea un diccionario
         if data and data.get('datos') and isinstance(data['datos'], str):
             data['datos'] = json.loads(data['datos'])
             
@@ -292,7 +279,6 @@ def get_ultimo_reporte_por_rol(rol):
             "error": None
         }
     except Exception as e:
-        print(f"DEBUG: get_ultimo_reporte_por_rol error: {str(e)}")
         return {
             "data": None,
             "message": "error",

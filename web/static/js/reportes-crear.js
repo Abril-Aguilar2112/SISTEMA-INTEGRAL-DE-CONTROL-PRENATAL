@@ -53,6 +53,9 @@ function renderFormularioPorRol(rol) {
     } else if (rol === 'medico' && typeof PRECARGA_DATA !== 'undefined' && PRECARGA_DATA) {
         aplicarPrecargaMedico(PRECARGA_DATA);
         cargarDatosReporteAnterior(rol);
+    } else if (rol === 'trabajo_social' && typeof PRECARGA_DATA !== 'undefined' && PRECARGA_DATA) {
+        aplicarPrecargaTS(PRECARGA_DATA);
+        cargarDatosReporteAnterior(rol);
     }
     
     actualizarJsonPreview();
@@ -270,6 +273,61 @@ function aplicarPrecargaDirector(data) {
         document.getElementById('dir_ts_pacientes_reintegradas').value = data.ts_pacientes_reintegradas || 0;
 
     showToast('Datos de vista precargados automáticamente', 'success');
+}
+
+function aplicarPrecargaTS(data) {
+    if (!data) return;
+    
+    if (data.resumen) {
+        const r = data.resumen;
+        if (document.getElementById('ts_total_inasistencias')) 
+            document.getElementById('ts_total_inasistencias').value = r.total_inasistencias || 0;
+        if (document.getElementById('ts_justificadas')) 
+            document.getElementById('ts_justificadas').value = r.justificadas || 0;
+        if (document.getElementById('ts_sin_justificacion')) 
+            document.getElementById('ts_sin_justificacion').value = r.sin_justificacion || 0;
+        if (document.getElementById('ts_pacientes_reintegradas')) 
+            document.getElementById('ts_pacientes_reintegradas').value = r.pacientes_reintegradas || 0;
+    }
+    
+    if (data.casos && Array.isArray(data.casos)) {
+        const tbody = document.getElementById('casosTSBody');
+        if (tbody) {
+            tbody.innerHTML = '';
+            data.casos.forEach(c => {
+                const row = document.createElement('tr');
+                const nombre = c.nombre_completo || c.nombre || '';
+                const telefono = c.telefono || '';
+                const fecha = c.fecha_cita || c.fecha || '';
+                const motivo = c.motivo || c.motivo_inasistencia || '';
+                const justificada = c.justificada === true;
+                const obsTS = c.observacion_ts || c.estado_seguimiento || '';
+                const mensaje = c.mensaje_seguimiento || c.observacion_ts || '';
+
+                row.innerHTML = `
+                    <td><input type="text" value="${nombre}" placeholder="Nombre"></td>
+                    <td><input type="tel" value="${telefono}" placeholder="Teléfono"></td>
+                    <td><input type="date" value="${fecha}"></td>
+                    <td><input type="text" value="${motivo}" placeholder="Motivo"></td>
+                    <td><input type="checkbox" style="width: auto;" ${justificada ? 'checked' : ''}></td>
+                    <td>
+                        <select>
+                            <option value="">Seleccionar</option>
+                            <option value="pendiente" ${obsTS === 'pendiente' ? 'selected' : ''}>Pendiente</option>
+                            <option value="reintegrada" ${obsTS === 'reintegrada' ? 'selected' : ''}>Reintegrada</option>
+                            <option value="sin_contacto" ${obsTS === 'sin_contacto' ? 'selected' : ''}>Sin Contacto</option>
+                        </select>
+                    </td>
+                    <td><input type="text" value="${mensaje}" placeholder="Mensaje"></td>
+                    <td><button type="button" class="btn-remove-row" onclick="this.closest('tr').remove(); actualizarJsonPreview();">×</button></td>
+                `;
+                tbody.appendChild(row);
+                row.querySelectorAll('input, select').forEach(el => el.addEventListener('input', actualizarJsonPreview));
+            });
+        }
+    }
+    
+    showToast('Datos de inasistencias y casos precargados', 'success');
 }
 
 function agregarFilaCensoEnfermera() {

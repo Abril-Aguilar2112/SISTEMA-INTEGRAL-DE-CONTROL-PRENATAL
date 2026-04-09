@@ -19,7 +19,6 @@ def citas():
     if session['rol'] == 'medico':
         id_medico = session['user_id']
         citas = get_citas(search, fecha, estado, id_medico)
-        print(citas)
     else:
         citas = get_citas(search, fecha, estado)
 

@@ -21,8 +21,6 @@ def reportes():
 
 @reportes_bp.route('/reportes/crear_reporte')
 def crear_reporte():
-    print(f"DEBUG: START crear_reporte - session keys: {list(session.keys())}")
-    print(f"DEBUG: user_id={session.get('user_id')}, rol={session.get('rol')}")
     roles_permitidos = ['director_general', 'medico', 'enfermera', 'trabajo_social']
     if 'user_id' not in session or session.get('rol') not in roles_permitidos:
         return redirect(url_for('auth.login'))
@@ -57,8 +55,6 @@ def crear_reporte():
             'casos': res_casos['data'] if not res_casos['error'] and res_casos['data'] else []
         }
     
-    print(precarga)
-            
     return render_template('reportes/reportes_crear.html', rol=session.get('rol'), precarga=precarga)
 
 @reportes_bp.route('/api/reportes', methods=['GET'])
