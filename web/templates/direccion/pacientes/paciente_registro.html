@@ -86,7 +86,7 @@
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
                     <div class="form-group">
                         <label class="form-label">Mes de Reporte</label>
-                        <select name="mes_reporte" class="form-select">
+                        <select name="mes_reporte" class="form-select" required>
                             <option value="">Seleccionar...</option>
                             <option>Enero</option>
                             <option>Febrero</option>
@@ -104,11 +104,11 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Fecha de Reporte</label>
-                        <input type="date" name="fecha_reporte" class="form-input" value="2026-04-06">
+                        <input type="date" name="fecha_reporte" class="form-input" value="2026-04-06" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Semana Epidemiológica</label>
-                        <input type="number" name="semana_epidemiologica" class="form-input" placeholder="Ej: 14" min="1" max="53">
+                        <input type="number" name="semana_epidemiologica" class="form-input" placeholder="Ej: 14" min="1" max="53" required>
                     </div>
                 </div>
             </div>
@@ -122,7 +122,7 @@
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
                     <div class="form-group">
                         <label class="form-label">Región</label>
-                        <select name="region" class="form-select">
+                        <select name="region" class="form-select" required>
                             <option value="">Seleccionar...</option>
                             <option>Norte</option>
                             <option>Sur</option>
@@ -133,23 +133,23 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">No. Consecutivo</label>
-                        <input type="text" name="no_consecutivo" class="form-input" placeholder="Ej: 001">
+                        <input type="text" name="no_consecutivo" class="form-input" placeholder="Ej: 001" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Fecha de Ingreso a CPN</label>
-                        <input type="date" name="fecha_ingreso_cpn" class="form-input">
+                        <input type="date" name="fecha_ingreso_cpn" class="form-input" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">CLUES IMB</label>
-                        <input type="text" name="clues_imb" class="form-input" placeholder="Código CLUES">
+                        <input type="text" name="clues_imb" class="form-input" placeholder="Código CLUES" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Municipio</label>
-                        <input type="text" name="municipio" class="form-input" placeholder="Ej: Guadalajara">
+                        <input type="text" name="municipio" class="form-input" placeholder="Ej: Guadalajara" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Tipo de Localidad</label>
-                        <select name="tipo_localidad" class="form-select">
+                        <select name="tipo_localidad" class="form-select" required>
                             <option value="">Seleccionar...</option>
                             <option>Urbana</option>
                             <option>Rural</option>
@@ -157,11 +157,11 @@
                     </div>
                     <div class="form-group" style="grid-column: span 2;">
                         <label class="form-label">Nombre de la Unidad de Salud</label>
-                        <input type="text" name="unidad_salud" class="form-input" placeholder="Nombre completo de la unidad">
+                        <input type="text" name="unidad_salud" class="form-input" placeholder="Nombre completo de la unidad" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Zona de Servicios Médicos</label>
-                        <input type="text" name="zona_servicios" class="form-input" placeholder="Zona">
+                        <input type="text" name="zona_servicios" class="form-input" placeholder="Zona" required>
                     </div>
                 </div>
             </div>
@@ -175,11 +175,11 @@
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
                     <div class="form-group" style="grid-column: span 2;">
                         <label class="form-label">Nombre Completo</label>
-                        <input type="text" name="nombre" class="form-input" placeholder="Nombre(s) Apellido Paterno Apellido Materno" required>
+                        <input type="text" name="nombre" class="form-input" placeholder="Nombre(s) Apellido Paterno Apellido Materno" required minlength="3">
                     </div>
                     <div class="form-group">
                         <label class="form-label">CURP</label>
-                        <input type="text" name="curp" class="form-input" placeholder="18 caracteres" maxlength="18" pattern="[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[A-Z0-9][0-9]" title="Debe ser un CURP válido (18 caracteres en mayúsculas)">
+                        <input type="text" name="curp" class="form-input" placeholder="18 caracteres" maxlength="18" pattern="[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[A-Z0-9][0-9]" title="Debe ser un CURP válido (18 caracteres en mayúsculas)" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Edad</label>
@@ -187,11 +187,11 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Teléfono</label>
-                        <input type="text" name="telefono" class="form-input" placeholder="10 dígitos" pattern="[0-9]{10}" title="Debe contener 10 dígitos numéricos">
+                        <input type="text" name="telefono" class="form-input" placeholder="10 dígitos" pattern="[0-9]{10}" title="Debe contener 10 dígitos numéricos" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Lengua Indígena</label>
-                        <select name="lengua_indigena" class="form-select">
+                        <select name="lengua_indigena" class="form-select" required>
                             <option value="">No aplica</option>
                             <option>Náhuatl</option>
                             <option>Maya</option>
@@ -203,7 +203,7 @@
                     </div>
                     <div class="form-group" style="grid-column: span 2;">
                         <label class="form-label">Colonia / Dirección</label>
-                        <input type="text" name="colonia" class="form-input" placeholder="Nombre de la colonia o dirección completa">
+                        <input type="text" name="colonia" class="form-input" placeholder="Nombre de la colonia o dirección completa" required>
                     </div>
                 </div>
             </div>
@@ -217,23 +217,23 @@
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
                     <div class="form-group">
                         <label class="form-label">Gestas</label>
-                        <input type="number" name="gestas" class="form-input" placeholder="0" min="0">
+                        <input type="number" name="gestas" class="form-input" placeholder="0" min="0" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Partos</label>
-                        <input type="number" name="partos" class="form-input" placeholder="0" min="0">
+                        <input type="number" name="partos" class="form-input" placeholder="0" min="0" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Cesáreas</label>
-                        <input type="number" name="cesareas" class="form-input" placeholder="0" min="0">
+                        <input type="number" name="cesareas" class="form-input" placeholder="0" min="0" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Abortos</label>
-                        <input type="number" name="abortos" class="form-input" placeholder="0" min="0">
+                        <input type="number" name="abortos" class="form-input" placeholder="0" min="0" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">FUR (Fecha Última Regla)</label>
-                        <input type="date" name="fur" class="form-input">
+                        <input type="date" name="fur" class="form-input" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Semanas de Gestación (SDG)</label>
@@ -241,7 +241,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">FPP (Fecha Probable de Parto)</label>
-                        <input type="date" name="fpp" class="form-input">
+                        <input type="date" name="fpp" class="form-input" required>
                     </div>
                 </div>
             </div>

@@ -92,7 +92,7 @@
                 <div class="grid grid-cols-2">
                     <div class="form-group">
                         <label class="form-label">Nombre Completo</label>
-                        <input type="text" name="nombre" class="form-input" value="{{ usuario['nombre'] }}" required>
+                        <input type="text" name="nombre" class="form-input" value="{{ usuario['nombre'] }}" required minlength="3" maxlength="100">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Correo Electrónico</label>
@@ -100,11 +100,11 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Teléfono</label>
-                        <input type="tel" name="telefono" class="form-input" value="{{ usuario['telefono'] if usuario['telefono'] else '' }}">
+                        <input type="tel" name="telefono" class="form-input" value="{{ usuario['telefono'] if usuario['telefono'] else '' }}" pattern="[0-9]{10}" title="Por favor ingrese un número de 10 dígitos">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Estado</label>
-                        <select name="estado" class="form-select">
+                        <select name="estado" class="form-select" required>
                             <option value="1" {{ 'selected' if usuario['estado'] else '' }}>Activo</option>
                             <option value="0" {{ 'selected' if not usuario['estado'] else '' }}>Inactivo</option>
                         </select>
@@ -136,11 +136,11 @@
                 <div class="grid grid-cols-2">
                     <div class="form-group">
                         <label class="form-label">Nueva Contraseña</label>
-                        <input type="password" name="password" class="form-input" placeholder="Dejar en blanco para mantener actual">
+                        <input type="password" name="password" class="form-input" placeholder="Dejar en blanco para mantener actual" minlength="6">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Confirmar Nueva Contraseña</label>
-                        <input type="password" name="confirm_password" class="form-input" placeholder="Confirmar nueva contraseña"> 
+                        <input type="password" name="confirm_password" class="form-input" placeholder="Confirmar nueva contraseña" minlength="6"> 
                     </div>
                 </div>
             </div>

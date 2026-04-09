@@ -90,7 +90,7 @@
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
                     <div class="form-group">
                         <label class="form-label">Mes de Reporte</label>
-                        <select name="mes_reporte" class="form-select">
+                        <select name="mes_reporte" class="form-select" required>
                             {% for mes in ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'] %}
                                 <option value="{{ mes }}" {{ 'selected' if paciente.mes_reporte == mes else '' }}>{{ mes }}</option>
                             {% endfor %}
@@ -98,11 +98,11 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Fecha de Reporte</label>
-                        <input type="date" name="fecha_reporte" class="form-input" value="{{ paciente.fecha_reporte }}">
+                        <input type="date" name="fecha_reporte" class="form-input" value="{{ paciente.fecha_reporte }}" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Semana Epidemiológica</label>
-                        <input type="number" name="semana_epidemiologica" class="form-input" value="{{ paciente.semana_epidemiologica }}" min="1" max="53">
+                        <input type="number" name="semana_epidemiologica" class="form-input" value="{{ paciente.semana_epidemiologica }}" min="1" max="53" required>
                     </div>
                 </div>
             </div>
@@ -116,7 +116,7 @@
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
                     <div class="form-group">
                         <label class="form-label">Región</label>
-                        <select name="region" class="form-select">
+                        <select name="region" class="form-select" required>
                             <option value="">Seleccionar...</option>
                             <option>Norte</option>
                             <option>Sur</option>
@@ -127,30 +127,30 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">CLUES IMB</label>
-                        <input type="text" name="clues_imb" class="form-input" value="{{ paciente.clues_imb }}">
+                        <input type="text" name="clues_imb" class="form-input" value="{{ paciente.clues_imb }}" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Municipio</label>
-                        <input type="text" name="municipio" class="form-input" value="{{ paciente.municipio }}">
+                        <input type="text" name="municipio" class="form-input" value="{{ paciente.municipio }}" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Tipo de Localidad</label>
-                        <select name="tipo_localidad" class="form-select">
+                        <select name="tipo_localidad" class="form-select" required>
                             <option value="Urbana" {{ 'selected' if paciente.tipo_localidad == 'Urbana' else '' }}>Urbana</option>
                             <option value="Rural" {{ 'selected' if paciente.tipo_localidad == 'Rural' else '' }}>Rural</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Nombre de Unidad</label>
-                        <input type="text" name="nombre_unidad" class="form-input" value="{{ paciente.nombre_unidad }}">
+                        <input type="text" name="nombre_unidad" class="form-input" value="{{ paciente.nombre_unidad }}" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Zona de Servicios</label>
-                        <input type="text" name="zona_servicios" class="form-input" value="{{ paciente.zona_servicios }}">
+                        <input type="text" name="zona_servicios" class="form-input" value="{{ paciente.zona_servicios }}" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">No. Consecutivo</label>
-                        <input type="text" name="no_consecutivo" class="form-input" value="{{ paciente.no_consecutivo }}">
+                        <input type="text" name="no_consecutivo" class="form-input" value="{{ paciente.no_consecutivo }}" required>
                     </div>
                 </div>
             </div>
@@ -164,11 +164,11 @@
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
                     <div class="form-group" style="grid-column: span 2;">
                         <label class="form-label">Nombre Completo</label>
-                        <input type="text" name="nombre" class="form-input" value="{{ paciente.nombre }}" required>
+                        <input type="text" name="nombre" class="form-input" value="{{ paciente.nombre }}" required minlength="3">
                     </div>
                     <div class="form-group">
                         <label class="form-label">CURP</label>
-                        <input type="text" name="curp" class="form-input" value="{{ paciente.curp }}" maxlength="18" pattern="[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[A-Z0-9][0-9]" title="Debe ser un CURP válido">
+                        <input type="text" name="curp" class="form-input" value="{{ paciente.curp }}" maxlength="18" pattern="[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[A-Z0-9][0-9]" title="Debe ser un CURP válido" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Edad</label>
@@ -176,15 +176,15 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Teléfono</label>
-                        <input type="text" name="telefono" class="form-input" value="{{ paciente.telefono }}" pattern="[0-9]{10}">
+                        <input type="text" name="telefono" class="form-input" value="{{ paciente.telefono }}" pattern="[0-9]{10}" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Colonia/Dirección</label>
-                        <input type="text" name="colonia" class="form-input" value="{{ paciente.colonia }}">
+                        <input type="text" name="colonia" class="form-input" value="{{ paciente.colonia }}" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Lengua Indígena</label>
-                        <select name="lengua_indigena" class="form-select">
+                        <select name="lengua_indigena" class="form-select" required>
                             <option value="{{ paciente.lengua_indigena }}">{{ paciente.lengua_indigena }}</option>
                             {% for lengua in ['No aplica', 'Náhuatl', 'Maya', 'Zapoteco', 'Mixteco', 'Otomí', 'Otra'] %}
                                 {% if lengua != paciente.lengua_indigena %}
@@ -209,11 +209,11 @@
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
                     <div class="form-group">
                         <label class="form-label">FUR</label>
-                        <input type="date" name="fur" class="form-input" value="{{ paciente.fur }}">
+                        <input type="date" name="fur" class="form-input" value="{{ paciente.fur }}" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">FPP</label>
-                        <input type="date" name="fpp" class="form-input" value="{{ paciente.fpp }}">
+                        <input type="date" name="fpp" class="form-input" value="{{ paciente.fpp }}" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">SDG Actual</label>
@@ -221,31 +221,31 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Fecha Ingreso CPN</label>
-                        <input type="date" name="fecha_ingreso_cpn" class="form-input" value="{{ paciente.fecha_ingreso_cpn }}">
+                        <input type="date" name="fecha_ingreso_cpn" class="form-input" value="{{ paciente.fecha_ingreso_cpn }}" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Fecha Última Atención</label>
-                        <input type="date" name="fecha_ultima_atencion" class="form-input" value="{{ paciente.fecha_ultima_atencion }}">
+                        <input type="date" name="fecha_ultima_atencion" class="form-input" value="{{ paciente.fecha_ultima_atencion }}" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Gestas</label>
-                        <input type="number" name="gestas" class="form-input" value="{{ paciente.gestas or 0 }}" min="0">
+                        <input type="number" name="gestas" class="form-input" value="{{ paciente.gestas or 0 }}" min="0" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Partos</label>
-                        <input type="number" name="partos" class="form-input" value="{{ paciente.partos or 0 }}" min="0">
+                        <input type="number" name="partos" class="form-input" value="{{ paciente.partos or 0 }}" min="0" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Cesáreas</label>
-                        <input type="number" name="cesareas" class="form-input" value="{{ paciente.cesareas or 0 }}" min="0">
+                        <input type="number" name="cesareas" class="form-input" value="{{ paciente.cesareas or 0 }}" min="0" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Abortos</label>
-                        <input type="number" name="abortos" class="form-input" value="{{ paciente.abortos or 0 }}" min="0">
+                        <input type="number" name="abortos" class="form-input" value="{{ paciente.abortos or 0 }}" min="0" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Riesgo Obstétrico</label>
-                        <select name="riesgo_obstetrico" class="form-select">
+                        <select name="riesgo_obstetrico" class="form-select" required>
                             <option value="bajo" {{ 'selected' if paciente.riesgo_obstetrico == 'bajo' else '' }}>Bajo</option>
                             <option value="medio" {{ 'selected' if paciente.riesgo_obstetrico == 'medio' else '' }}>Medio</option>
                             <option value="alto" {{ 'selected' if paciente.riesgo_obstetrico == 'alto' else '' }}>Alto</option>
@@ -253,7 +253,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Riesgo Social</label>
-                        <select name="riesgo_social" class="form-select">
+                        <select name="riesgo_social" class="form-select" required>
                             <option value="{{ paciente.riesgo_social }}">{{ paciente.riesgo_social }}</option>
                             {% for riesgo in ['Ninguno', 'Violencia intrafamiliar', 'Adicciones', 'Falta de apoyo familiar', 'Otros'] %}
                                 {% if riesgo != paciente.riesgo_social %}
@@ -264,7 +264,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Factores de Riesgo</label>
-                        <select name="factores_riesgo" class="form-select">
+                        <select name="factores_riesgo" class="form-select" required>
                             <option value="{{ paciente.factores_riesgo }}">{{ paciente.factores_riesgo }}</option>
                             {% for factor in ['Edad menor a 20 años', 'Edad mayor a 20 años', 'Edad mayor a 35 años', 'Multiparidad', 'Embarazo múltiple', 'Otros'] %}
                                 {% if factor != paciente.factores_riesgo %}
@@ -275,11 +275,11 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Consultas Otorgadas</label>
-                        <input type="number" name="consultas_otorgadas" class="form-input" value="{{ paciente.consultas_otorgadas or 0 }}" min="0">
+                        <input type="number" name="consultas_otorgadas" class="form-input" value="{{ paciente.consultas_otorgadas or 0 }}" min="0" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Estado de Salud</label>
-                        <select name="estado_salud" class="form-select">
+                        <select name="estado_salud" class="form-select" required>
                             <option value="{{ paciente.estado_salud }}">{{ paciente.estado_salud }}</option>
                             {% for estado in ['Saludable', 'Complicaciones menores', 'Requiere monitoreo', 'Alto riesgo'] %}
                                 {% if estado != paciente.estado_salud %}

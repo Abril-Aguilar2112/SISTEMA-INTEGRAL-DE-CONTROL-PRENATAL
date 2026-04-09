@@ -199,17 +199,20 @@
         <div class="data-field">
           <span class="data-label">Tipo de Localidad</span>
           <span class="data-value">{{ censo.data.tipo_localidad | default('-', true) }}</span>
-          <input type="text" name="tipo_localidad" value="{{ censo.data.tipo_localidad }}" class="hidden">
+          <select name="tipo_localidad" class="hidden" required>
+            <option value="Urbana" {% if censo.data.tipo_localidad == 'Urbana' %}selected{% endif %}>Urbana</option>
+            <option value="Rural" {% if censo.data.tipo_localidad == 'Rural' %}selected{% endif %}>Rural</option>
+          </select>
         </div>
         <div class="data-field" style="grid-column: span 2;">
           <span class="data-label">Nombre de la Unidad de Salud</span>
           <span class="data-value">{{ censo.data.nombre_unidad | default('-', true) }}</span>
-          <input type="text" name="nombre_unidad" value="{{ censo.data.nombre_unidad }}" class="hidden">
+          <input type="text" name="nombre_unidad" value="{{ censo.data.nombre_unidad }}" class="hidden" required>
         </div>
         <div class="data-field">
           <span class="data-label">Zona de Servicios Médicos / Hospital Resolutivo</span>
           <span class="data-value">{{ censo.data.zona_servicios | default('-', true) }}</span>
-          <input type="text" name="zona_servicios" value="{{ censo.data.zona_servicios }}" class="hidden">
+          <input type="text" name="zona_servicios" value="{{ censo.data.zona_servicios }}" class="hidden" required>
         </div>
       </div>
     </section>
@@ -235,12 +238,12 @@
         <div class="data-field" style="grid-column: span 2;">
           <span class="data-label">CURP</span>
           <span class="data-value" style="font-family: monospace; letter-spacing: 0.05em;">{{ censo.data.curp | default('RUCX070408HDFLNN01', true) }}</span>
-          <input type="text" name="curp" value="{{ censo.data.curp }}" class="hidden" pattern="[A-Z]{4}[0-9]{6}[H,M][A-Z]{5}[A-Z0-9]{2}" title="Ingrese un CURP válido de 18 caracteres">
+          <input type="text" name="curp" value="{{ censo.data.curp }}" class="hidden" pattern="[A-Z]{4}[0-9]{6}[H,M][A-Z]{5}[A-Z0-9]{2}" title="Ingrese un CURP válido de 18 caracteres" required maxlength="18">
         </div>
         <div class="data-field">
           <span class="data-label">Lengua Indígena</span>
           <span class="data-value">{{ censo.data.lengua_indigena | default('Ninguna', true) }}</span>
-          <select name="lengua_indigena" class="hidden">
+          <select name="lengua_indigena" class="hidden" required>
             {% set lenguas = ['Ninguna', 'Náhuatl', 'Maya', 'Tseltal', 'Tsotsil', 'Mixteco', 'Zapoteco', 'Otomí', 'Totonaco', 'Chol', 'Mazateco', 'Otro'] %}
             {% for lengua in lenguas %}
               <option value="{{ lengua }}" {% if censo.data.lengua_indigena == lengua %}selected{% endif %}>{{ lengua }}</option>

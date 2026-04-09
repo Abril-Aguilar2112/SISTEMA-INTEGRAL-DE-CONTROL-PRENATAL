@@ -142,15 +142,15 @@
                     <div class="data-grid cols-3" style="gap: 1rem;">
                         <div class="data-field">
                             <label class="data-label required-field">Total Pacientes Activas</label>
-                            <input type="number" id="enf_total_pacientes_activas" min="0" required oninput="calcularEnfermeraSeguimiento()">
+                            <input type="number" id="enf_total_pacientes_activas" min="0" required oninput="calcularEnfermeraSeguimiento()" placeholder="0">
                         </div>
                         <div class="data-field">
                             <label class="data-label required-field">Pacientes Nuevas</label>
-                            <input type="number" id="enf_pacientes_nuevas" min="0" required oninput="calcularEnfermeraSeguimiento()">
+                            <input type="number" id="enf_pacientes_nuevas" min="0" required oninput="calcularEnfermeraSeguimiento()" placeholder="0">
                         </div>
                         <div class="data-field">
                             <label class="data-label">Pacientes en Seguimiento</label>
-                            <input type="number" id="enf_pacientes_en_seguimiento" readonly style="background: var(--gray-100);">
+                            <input type="number" id="enf_pacientes_en_seguimiento" readonly style="background: var(--gray-100);" placeholder="0">
                         </div>
                     </div>
                 </div>
@@ -163,19 +163,19 @@
                     <div class="data-grid cols-4" style="gap: 1rem;">
                         <div class="data-field">
                             <label class="data-label required-field">Citas Programadas</label>
-                            <input type="number" id="enf_citas_programadas" min="0" required>
+                            <input type="number" id="enf_citas_programadas" min="0" required placeholder="0">
                         </div>
                         <div class="data-field">
                             <label class="data-label required-field">Citas Cumplidas</label>
-                            <input type="number" id="enf_citas_cumplidas" min="0" required>
+                            <input type="number" id="enf_citas_cumplidas" min="0" required placeholder="0">
                         </div>
                         <div class="data-field">
                             <label class="data-label required-field">Citas Canceladas</label>
-                            <input type="number" id="enf_citas_canceladas" min="0" required>
+                            <input type="number" id="enf_citas_canceladas" min="0" required placeholder="0">
                         </div>
                         <div class="data-field">
                             <label class="data-label required-field">Inasistencias</label>
-                            <input type="number" id="enf_inasistencias" min="0" required>
+                            <input type="number" id="enf_inasistencias" min="0" required placeholder="0">
                         </div>
                     </div>
                 </div>
